@@ -12,7 +12,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   // Check if current page should have glassmorphic effect
-  const glassmorphicPages = ['/talents', '/startups', '/contact', '/about'];
+  const glassmorphicPages = ['/talents', '/startups', '/contact'];
   const isGlassmorphic = glassmorphicPages.includes(pathname);
 
   // Handle scroll behavior
@@ -24,9 +24,11 @@ export default function Navbar() {
       if (currentScrollY < 10) {
         setIsVisible(true);
       } 
-      // Hide when scrolling down, show when scrolling up
+      // Hide when scrolling down, show when scrolling up (but not on mobile when menu is open)
       else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
+        if (!isMenuOpen) {
+          setIsVisible(false);
+        }
       } else if (currentScrollY < lastScrollY) {
         setIsVisible(true);
       }
@@ -39,11 +41,32 @@ export default function Navbar() {
     
     // Cleanup
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, [lastScrollY, isMenuOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Close menu when clicking outside or pressing escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   // Desktop capsule styles based on current page
   const desktopCapsuleClass = isGlassmorphic 
@@ -66,148 +89,60 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`w-full sticky top-0 z-50 transition-transform duration-300 ease-in-out ${
-      isVisible ? 'transform translate-y-0' : 'transform -translate-y-full'
-    }`}>
-      {/* Desktop Capsule Container */}
-      <div className="hidden md:block pt-4 px-4">
-        <div className={`max-w-6xl mx-auto ${desktopCapsuleClass} rounded-full shadow-lg`}>
-          <div className="flex justify-between items-center h-16 lg:h-18 px-6 lg:px-8">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center">
-                <Image 
-                  src={isGlassmorphic ? "/images/greenlogo.png" : "/images/juniorforge.png"}
-                  alt="Logo" 
-                  width={100} 
-                  height={100}
-                />
-              </Link>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="flex items-center space-x-1 lg:space-x-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`relative px-3 lg:px-4 py-2 rounded-full transition-all duration-200 ease-in-out font-medium text-sm lg:text-base ${
-                    isGlassmorphic 
-                      ? 'hover:bg-black/10 hover:backdrop-blur-sm text-black' 
-                      : 'hover:bg-gray-700 text-white'
-                  } ${
-                    isActive(item.href) 
-                      ? `after:absolute after:bottom-0 after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-0.5 after:rounded-full ${
-                          isGlassmorphic ? 'after:bg-black' : 'after:bg-white'
-                        }` 
-                      : ''
-                  }`}
-                >
-                  {item.name}
+    <>
+      <nav className={`w-full fixed top-0 z-50 transition-transform duration-300 ease-in-out ${
+        isVisible ? 'transform translate-y-0' : 'transform -translate-y-full'
+      }`}>
+        {/* Desktop Capsule Container */}
+        <div className="hidden md:block pt-4 px-4">
+          <div className={`max-w-6xl mx-auto ${desktopCapsuleClass} rounded-full shadow-lg`}>
+            <div className="flex justify-between items-center h-16 lg:h-18 px-6 lg:px-8">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <Link href="/" className="flex items-center">
+                  <Image 
+                    src={isGlassmorphic ? "/images/greenlogo.png" : "/images/juniorforge.png"}
+                    alt="Logo" 
+                    width={100} 
+                    height={100}
+                    className="h-auto w-auto"
+                    priority
+                  />
                 </Link>
-              ))}
-            </div>
+              </div>
 
-            {/* Desktop Contact Button */}
-            <div>
-              <Link
-                href="/contact"
-                className={`${
-                  isActive('/contact') 
-                    ? 'bg-[#0F6B47] border-[#37ffb7]' 
-                    : 'bg-[#12895E] border-[#37ffb7]'
-                } text-white border px-6 lg:px-8 py-2 lg:py-3 rounded-full hover:bg-gray-900 transition-all duration-300 ease-in-out font-medium text-sm lg:text-base shadow-sm hover:shadow-md transform hover:-translate-y-0.5`}
-              >
-                Contact
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="md:hidden w-full bg-[#16252D] shadow-sm border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-0 lg:px-0">
-          <div className="flex justify-between items-center h-16 lg:h-20">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center">
-                <Image src="/images/juniorforge.png" alt="Logo" width={100} height={100} />
-              </Link>
-            </div>
-
-            {/* Mobile menu button */}
-            <div>
-              <button
-                onClick={toggleMenu}
-                className="p-2 rounded-lg text-white transition-colors duration-200"
-                aria-label="Toggle menu"
-              >
-                <div className="w-6 h-6 flex flex-col justify-center items-center space-y-1">
-                  <span
-                    className={`block w-5 h-0.5 bg-current transition-all duration-300 ${
-                      isMenuOpen ? 'rotate-45 translate-y-1.5' : ''
+              {/* Desktop Navigation */}
+              <div className="flex items-center space-x-1 lg:space-x-2">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`relative px-3 lg:px-4 py-2 rounded-full transition-all duration-200 ease-in-out font-medium text-sm lg:text-base ${
+                      isGlassmorphic 
+                        ? 'hover:bg-black/10 hover:backdrop-blur-sm text-black' 
+                        : 'hover:bg-gray-700 text-white'
+                    } ${
+                      isActive(item.href) 
+                        ? `after:absolute after:bottom-0 after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-0.5 after:rounded-full ${
+                            isGlassmorphic ? 'after:bg-black' : 'after:bg-white'
+                          }` 
+                        : ''
                     }`}
-                  />
-                  <span
-                    className={`block w-5 h-0.5 bg-current transition-all duration-300 ${
-                      isMenuOpen ? 'opacity-0' : ''
-                    }`}
-                  />
-                  <span
-                    className={`block w-5 h-0.5 bg-current transition-all duration-300 ${
-                      isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
-                    }`}
-                  />
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
 
-        {/* Mobile Navigation Menu - Full Screen Overlay */}
-        <div
-          className={`fixed inset-0 top-16 lg:top-20 bg-[#16252D] z-40 transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-          }`}
-        >
-          <div className="h-full overflow-y-auto px-4 py-6">
-            <div className="space-y-2 text-center">
-              {navItems.map((item, index) => (
-                <Link 
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`relative block px-4 py-4 text-white  transition-all duration-200 font-medium text-lg  ${
-                    isMenuOpen
-                      ? `animate-fadeInUp animation-delay-${index * 100}`
-                      : ''
-                  } ${
-                    isActive(item.href) ? 'after:absolute after:bottom-3 after:left-4 after:right-4 after:h-0.5 after:bg-white after:rounded-full' : ''
-                  }`}
-                  style={{
-                    animationDelay: isMenuOpen ? `${index * 100}ms` : '0ms'
-                  }}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              {/* Mobile Contact Button */}
-              <div className="pt-8">
+              {/* Desktop Contact Button */}
+              <div>
                 <Link
                   href="/contact"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block w-full text-center ${
+                  className={`${
                     isActive('/contact') 
-                      ? 'bg-[#12895E] text-white' 
-                      : 'bg-[#12895E] text-white hover:bg-gray-100'
-                  } px-6 py-4 rounded-full transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl transform hover:scale-105 ${
-                    isMenuOpen ? 'animate-fadeInUp animation-delay-400' : ''
-                  }`}
-                  style={{
-                    animationDelay: isMenuOpen ? '400ms' : '0ms'
-                  }}
+                      ? 'bg-[#0F6B47] border-[#37ffb7]' 
+                      : 'bg-[#12895E] border-[#37ffb7] hover:bg-[#0F6B47]'
+                  } text-white border px-6 lg:px-8 py-2 lg:py-3 rounded-full transition-all duration-300 ease-in-out font-medium text-sm lg:text-base shadow-sm hover:shadow-md transform hover:-translate-y-0.5`}
                 >
                   Contact
                 </Link>
@@ -215,7 +150,108 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden w-full bg-[#16252D] shadow-sm border-b border-gray-100/10">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex justify-between items-center h-20">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <Link href="/" className="flex items-center">
+                  <Image 
+                    src="/images/juniorforge.png" 
+                    alt="Logo" 
+                    width={100} 
+                    height={100}
+                    className="h-auto w-auto"
+                    priority
+                  />
+                </Link>
+              </div>
+
+              {/* Mobile menu button */}
+              <button
+                onClick={toggleMenu}
+                className="p-2 rounded-lg text-white hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
+                aria-label="Toggle menu"
+                aria-expanded={isMenuOpen}
+              >
+                <div className="w-6 h-6 flex flex-col justify-center items-center">
+                  <span
+                    className={`block w-5 h-0.5 bg-current transition-all duration-300 ${
+                      isMenuOpen ? 'rotate-45 translate-y-0' : 'mb-1'
+                    }`}
+                  />
+                  <span
+                    className={`block w-5 h-0.5 bg-current transition-all duration-300 ${
+                      isMenuOpen ? 'opacity-0' : 'mb-1'
+                    }`}
+                  />
+                  <span
+                    className={`block w-5 h-0.5 bg-current transition-all duration-300 ${
+                      isMenuOpen ? '-rotate-45 -translate-y-0' : ''
+                    }`}
+                  />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Navigation Menu - Full Screen Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-white z-[9999] md:hidden px-4">
+          {/* Close button */}
+          <div className="absolute top-4 left-4 z-10">
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="p-3 text-white bg-[#16252D] rounded-full transition-colors"
+              aria-label="Close menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Menu Content */}
+          <div className="flex items-center justify-center h-[80vh] px-6    mt-4">
+            <div className="w-full max-w-md">
+              {/* Navigation Links */}
+              <div className="space-y-4 mb-8 bg-[#16252D] py-10 rounded-lg">
+                {navItems.map((item) => (
+                  <Link 
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-6 py-4 text-white font-medium text-2xl text-center rounded-xl transition-all duration-200 hover:bg-gray-700/30 ${
+                      isActive(item.href) 
+                        ? 'bg-gray-700/50 text-[#12895E]' 
+                        : ''
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+                {/* Contact Button */}
+                <Link 
+                  href="/contact"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block w-full text-center font-medium text-2xl px-8 py-4 rounded-full transition-all duration-300 shadow-lg ${
+                    isActive('/contact') 
+                      ? 'bg-[#0F6B47] text-white' 
+                      : 'bg-[#12895E] text-white hover:bg-[#0F6B47]'
+                  }`}
+                >
+                  Contact
+                </Link>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes fadeInUp {
@@ -229,27 +265,32 @@ export default function Navbar() {
           }
         }
         
-        .animate-fadeInUp {
-          animation: fadeInUp 0.5s ease-out forwards;
-          opacity: 0;
+        .animate-fade-in-up {
+          animation: fadeInUp 0.6s ease-out forwards;
         }
-        
-        .animation-delay-100 {
-          animation-delay: 100ms;
+
+        /* Ensure mobile menu items are always visible when menu is open */
+        .mobile-menu-open {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          z-index: 9999 !important;
+          background-color: #16252D !important;
         }
-        
-        .animation-delay-200 {
-          animation-delay: 200ms;
-        }
-        
-        .animation-delay-300 {
-          animation-delay: 300ms;
-        }
-        
-        .animation-delay-400 {
-          animation-delay: 400ms;
+
+        /* Force visibility for small screens */
+        @media (max-width: 640px) {
+          .mobile-menu-item {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 10000 !important;
+          }
         }
       `}</style>
-    </nav>
+    </>
   );
 }

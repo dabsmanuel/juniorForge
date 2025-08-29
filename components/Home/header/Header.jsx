@@ -2,7 +2,7 @@ import Image from "next/image"
 
 const Header = () => {
   return (
-    <main className="relative">
+    <main className="relative mt-20">
       <div className='text-center py-12 flex flex-col items-center justify-center max-w-6xl mx-auto'>
         <div className='lg:text-7xl text-3xl font-bold'>
           <h2>Building Careers,</h2>

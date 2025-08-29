@@ -1,5 +1,7 @@
 import { FaUserCheck } from "react-icons/fa";
 import { TbMedicalCrossFilled } from "react-icons/tb";
+import { RiShieldCheckFill } from "react-icons/ri";
+import { HiSupport } from "react-icons/hi";
 
 export const startup = [
   {
@@ -76,14 +78,14 @@ export const whyWeAreDifferent = [
 
   {
     id: 3,
-    icon: '',
+    icon: <RiShieldCheckFill />,
     title: 'Tailored Matching',
     description: 'We don’t just fill roles, we carefully match startups with talents that aligns with their culture, goals and technical needs.'
   },
 
   {
     id: 4,
-    icon: '',
+    icon: <HiSupport />,
     title: 'End-to-End Support',
     description: 'From the first introduction to ongoing collaboration, we help ensure smooth onboarding, communication, and project success.'
   },
