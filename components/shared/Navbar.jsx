@@ -70,7 +70,7 @@ export default function Navbar() {
 
   // Desktop capsule styles based on current page
   const desktopCapsuleClass = isGlassmorphic 
-    ? "bg-white/10 backdrop-blur-md border border-[#12895E]" 
+    ? "bg-black/5 backdrop-blur-md border border-[#37ffb7]" 
     : "bg-[#16252D] border border-gray-100/10";
 
   const navItems = [
@@ -103,8 +103,8 @@ export default function Navbar() {
                   <Image 
                     src={isGlassmorphic ? "/images/juniorforge.png" : "/images/juniorforge.png"}
                     alt="Logo" 
-                    width={100} 
-                    height={100}
+                    width={200} 
+                    height={200}
                     className="h-auto w-auto"
                     priority
                   />
@@ -119,7 +119,7 @@ export default function Navbar() {
                     href={item.href}
                     className={`relative px-3 lg:px-4 py-2 rounded-full transition-all duration-200 ease-in-out font-medium text-sm lg:text-base ${
                       isGlassmorphic 
-                        ? 'hover:bg-black/10 hover:backdrop-blur-sm text-white' 
+                        ? 'hover:bg-black/40 hover:backdrop-blur-sm text-white' 
                         : 'hover:bg-gray-700 text-white'
                     } ${
                       isActive(item.href) 

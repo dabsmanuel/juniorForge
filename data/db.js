@@ -3,6 +3,7 @@ import { TbMedicalCrossFilled } from "react-icons/tb";
 import { RiShieldCheckFill } from "react-icons/ri";
 import { HiSupport } from "react-icons/hi";
 
+
 export const startup = [
   {
     id: 1,
@@ -90,3 +91,32 @@ export const whyWeAreDifferent = [
     description: 'From the first introduction to ongoing collaboration, we help ensure smooth onboarding, communication, and project success.'
   },
 ]
+
+
+export const startups = [
+  {
+    id: 1,
+    photo: '/images/first.png',
+    alt: 'pix1'
+  },
+
+  {
+    id: 2,
+    photo: '/images/second.png',
+    alt: 'pix2'
+  },
+
+  {
+    id: 3,
+    photo: '/images/third.png',
+    alt: 'pix3'
+  },
+
+  {
+    id: 4,
+    photo: '/images/fourth.png',
+    alt: 'pix4'
+  },
+]
+
+

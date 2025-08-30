@@ -14,7 +14,8 @@ module.exports = {
         juniorGreen: '#12895E',
         darkBlueGray: '#16252D',
         lightGray: '#A49595',
-        hoveredGreen: '#37ffb7'
+        hoveredGreen: '#37ffb7',
+        lightStroke: '#c1eddd'
       }
     },
   },

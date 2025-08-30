@@ -24,7 +24,7 @@ const Testimonials = () => {
   }, [])
 
   return (
-    <div className='lg:max-w-6xl lg:rounded-e-4xl bg-[#12895E] px-8 py-4 lg:mt-16'>
+    <div className='lg:max-w-6xl lg:rounded-e-[56px] bg-[#12895E] px-8 py-4 lg:mt-16'>
       <div className='lg:max-w-5xl mx-auto mb-10'>
         <h2 className='text-white font-bold text-4xl lg:block hidden py-8'>
           Trusted by Amazing Individuals
