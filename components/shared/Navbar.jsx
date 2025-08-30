@@ -123,8 +123,8 @@ export default function Navbar() {
                         : 'hover:bg-gray-700 text-white'
                     } ${
                       isActive(item.href) 
-                        ? `after:absolute after:bottom-0 after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-0.5 after:rounded-full ${
-                            isGlassmorphic ? 'after:bg-black' : 'after:bg-white'
+                        ? `after:absolute after:bottom-0 after:left-1/2 after:transform after:-translate-x-1/2 after:w-16 after:h-0.5 after:rounded-full ${
+                            isGlassmorphic ? 'after:bg-white' : 'after:bg-white'
                           }` 
                         : ''
                     }`}

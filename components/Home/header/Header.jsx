@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 
 const Header = () => {
   return (
@@ -12,12 +13,12 @@ const Header = () => {
           <p className='py-4 lg:text-2xl'>We connect high-potential talent with innovative startups ready to grow.</p>
         </div>
         <div className='mt-2 flex gap-4 '>
-          <button className='bg-[#685EFC] lg:text-2xl text-base cursor-pointer text-white lg:px-18 px-6 py-4 rounded-full  transition-all duration-300'>
+          <Link href='/contact' className='bg-[#685EFC] lg:text-2xl text-base cursor-pointer text-white lg:px-18 px-6 py-4 rounded-full  transition-all duration-300'>
             Find Talents
-          </button>
-          <button className='bg-[#12895E] lg:text-2xl text-base hover:bg-[#37ffb7] cursor-pointer hover:text-black text-white lg:px-10 px-6 py-4  rounded-full  transition-all duration-300'>
+          </Link>
+          <Link href='/contact' className='bg-[#12895E] lg:text-2xl text-base hover:bg-[#37ffb7] cursor-pointer hover:text-black text-white lg:px-10 px-6 py-4  rounded-full  transition-all duration-300'>
             Apply as a Talent
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -59,9 +60,9 @@ const Header = () => {
             <h2 className='lg:text-4xl text-[32px] font-bold pb-4'>Built by Startup Builders for Startup Builders</h2>
             <p className="">JuniorForge connects early-stage startups with ready-to-grow junior talents. We exist to close the experience gap and create opportunity where it matters most.</p>
             <div className='mt-4'>
-              <button className='bg-[#12895E] text-white lg:px-8 px-4 py-4 rounded-full transition-all duration-300 lg:w-fit w-full'>
+              <Link href='/about' className='bg-[#12895E] text-white lg:px-8 px-4 py-4 rounded-full transition-all duration-300 lg:w-fit w-full'>
                 Learn more...
-              </button>
+              </Link>
             </div>
           </div>
         </div>
