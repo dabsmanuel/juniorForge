@@ -101,7 +101,7 @@ export default function Navbar() {
               <div className="flex-shrink-0">
                 <Link href="/" className="flex items-center">
                   <Image 
-                    src={isGlassmorphic ? "/images/greenlogo.png" : "/images/juniorforge.png"}
+                    src={isGlassmorphic ? "/images/juniorforge.png" : "/images/juniorforge.png"}
                     alt="Logo" 
                     width={100} 
                     height={100}
@@ -119,7 +119,7 @@ export default function Navbar() {
                     href={item.href}
                     className={`relative px-3 lg:px-4 py-2 rounded-full transition-all duration-200 ease-in-out font-medium text-sm lg:text-base ${
                       isGlassmorphic 
-                        ? 'hover:bg-black/10 hover:backdrop-blur-sm text-black' 
+                        ? 'hover:bg-black/10 hover:backdrop-blur-sm text-white' 
                         : 'hover:bg-gray-700 text-white'
                     } ${
                       isActive(item.href) 

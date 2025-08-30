@@ -24,3 +24,9 @@ h1, h2 {
 html {
   scroll-behavior: smooth;
 }
+
+
+.startup {
+  background-attachment: fixed;
+  
+}
