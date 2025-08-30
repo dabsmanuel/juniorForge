@@ -89,8 +89,8 @@ export default function Custom404() {
             Oops! Page Not Found
           </h2>
           <p className="text-lg text-gray-400 leading-relaxed">
-            The page you're looking for seems to have wandered off into the digital void. 
-            Don't worry, even the best explorers sometimes take a wrong turn.
+            The page you&apos;re looking for seems to have wandered off into the digital void. 
+            Don&apos;t worry, even the best explorers sometimes take a wrong turn.
           </p>
         </div>
 
