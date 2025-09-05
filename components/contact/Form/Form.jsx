@@ -98,7 +98,7 @@ const Form = () => {
   
   return (
     <motion.section 
-      className='bg-[#16252D] max-w-5xl mx-auto lg:rounded-2xl my-16 lg:px-0 px-4'
+      className='bg-[#16252D] max-w-5xl mx-auto lg:rounded-2xl lg:my-16 lg:px-0 px-4'
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
