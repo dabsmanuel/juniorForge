@@ -49,7 +49,7 @@ const Header = () => {
   }
 
   return (
-    <main className="relative mt-20">
+    <main className="relative mt-20 overflow-hidden">
       <motion.div 
         className='text-center py-12 flex flex-col items-center justify-center max-w-6xl mx-auto relative px-4'
         variants={containerVariants}

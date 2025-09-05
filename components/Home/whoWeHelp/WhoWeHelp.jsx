@@ -17,7 +17,7 @@ const WhoWeHelp = () => {
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 }, // Reduced from 30 to 20
     visible: { 
       opacity: 1, 
       y: 0,
@@ -26,7 +26,7 @@ const WhoWeHelp = () => {
   }
 
   const listItemVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, x: -10 }, // Reduced from -20 to -10
     visible: { 
       opacity: 1, 
       x: 0,
@@ -48,7 +48,7 @@ const WhoWeHelp = () => {
   }
 
   const sectionVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 30 }, // Reduced from 50 to 30
     visible: {
       opacity: 1,
       y: 0,
@@ -62,7 +62,7 @@ const WhoWeHelp = () => {
   }
 
   return (
-    <section className="bg-[#16252D] py-16 text-white">
+    <section className="bg-[#16252D] py-16 text-white overflow-hidden"> {/* Added overflow-hidden */}
       <motion.div 
         className='max-w-6xl mx-auto lg:px-0 px-6'
         variants={containerVariants}
@@ -93,45 +93,47 @@ const WhoWeHelp = () => {
         style={{ originX: 0 }}
       ></motion.div>
 
-      <motion.div 
-        className='max-w-6xl mx-auto pt-16 lg:px-0 px-6'
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.2 }}
-      >
-        <motion.h2 
-          className='text-4xl font-bold py-4 uppercase'
-          variants={itemVariants}
-        >
-          For startups
-        </motion.h2>
-        <motion.ul 
-          className="list-disc pl-6"
-          variants={containerVariants}
-        >
-          {startup.map((item, index) => (
-            <motion.li 
-              key={index} 
-              className='py-2'
-              variants={listItemVariants}
-              whileHover={{ x: 5, transition: { duration: 0.2 } }}
-            >
-              {item.text}
-            </motion.li>
-          ))}
-        </motion.ul>
+      <div className="overflow-hidden"> {/* Added overflow container */}
         <motion.div 
-          className="mt-4"
-          variants={itemVariants}
+          className='max-w-6xl mx-auto pt-16 lg:px-0 px-6'
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
         >
-          <motion.div whileHover={buttonHover} whileTap={{ scale: 0.95 }}>
-            <Link href="/startups" className="text-[#16252D] bg-white px-6 py-2 rounded-full inline-block transition-all duration-300">
-              See How it Works
-            </Link>
+          <motion.h2 
+            className='text-4xl font-bold py-4 uppercase'
+            variants={itemVariants}
+          >
+            For startups
+          </motion.h2>
+          <motion.ul 
+            className="list-disc pl-6"
+            variants={containerVariants}
+          >
+            {startup.map((item, index) => (
+              <motion.li 
+                key={index} 
+                className='py-2'
+                variants={listItemVariants}
+                whileHover={{ x: 3, transition: { duration: 0.2 } }} // Reduced from 5 to 3
+              >
+                {item.text}
+              </motion.li>
+            ))}
+          </motion.ul>
+          <motion.div 
+            className="mt-4"
+            variants={itemVariants}
+          >
+            <motion.div whileHover={buttonHover} whileTap={{ scale: 0.95 }}>
+              <Link href="/startups" className="text-[#16252D] bg-white px-6 py-2 rounded-full inline-block transition-all duration-300">
+                See How it Works
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
 
       <motion.div 
         className='border-b border-white py-8'
@@ -142,45 +144,47 @@ const WhoWeHelp = () => {
         style={{ originX: 0 }}
       ></motion.div>
 
-      <motion.div 
-        className='max-w-6xl mx-auto pt-16 lg:px-0 px-6'
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.2 }}
-      >
-        <motion.h2 
-          className='text-4xl font-bold py-4 uppercase'
-          variants={itemVariants}
-        >
-          For Talents
-        </motion.h2>
-        <motion.ul 
-          className="list-disc pl-6"
-          variants={containerVariants}
-        >
-          {talents.map((item, index) => (
-            <motion.li 
-              key={index} 
-              className='py-2'
-              variants={listItemVariants}
-              whileHover={{ x: 5, transition: { duration: 0.2 } }}
-            >
-              {item.text}
-            </motion.li>
-          ))}
-        </motion.ul>
+      <div className="overflow-hidden"> {/* Added overflow container */}
         <motion.div 
-          className="mt-4"
-          variants={itemVariants}
+          className='max-w-6xl mx-auto pt-16 lg:px-0 px-6'
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
         >
-          <motion.div whileHover={buttonHover} whileTap={{ scale: 0.95 }}>
-            <Link href="/talents" className="text-[#16252D] bg-white px-6 py-2 rounded-full inline-block transition-all duration-300">
-              See How it Works
-            </Link>
+          <motion.h2 
+            className='text-4xl font-bold py-4 uppercase'
+            variants={itemVariants}
+          >
+            For Talents
+          </motion.h2>
+          <motion.ul 
+            className="list-disc pl-6"
+            variants={containerVariants}
+          >
+            {talents.map((item, index) => (
+              <motion.li 
+                key={index} 
+                className='py-2'
+                variants={listItemVariants}
+                whileHover={{ x: 3, transition: { duration: 0.2 } }} // Reduced from 5 to 3
+              >
+                {item.text}
+              </motion.li>
+            ))}
+          </motion.ul>
+          <motion.div 
+            className="mt-4"
+            variants={itemVariants}
+          >
+            <motion.div whileHover={buttonHover} whileTap={{ scale: 0.95 }}>
+              <Link href="/talents" className="text-[#16252D] bg-white px-6 py-2 rounded-full inline-block transition-all duration-300">
+                See How it Works
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   )
 }

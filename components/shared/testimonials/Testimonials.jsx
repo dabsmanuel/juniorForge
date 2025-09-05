@@ -38,14 +38,10 @@ const Testimonials = () => {
   }
 
   const cardVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 30, // Changed from x: 50 to y: 30 to prevent horizontal overflow
-      scale: 0.95 
-    },
+    hidden: { opacity: 0, x: 50, scale: 0.95 },
     visible: {
       opacity: 1,
-      y: 0, // Changed from x: 0 to y: 0
+      x: 0,
       scale: 1,
       transition: {
         duration: 0.8,
@@ -56,7 +52,7 @@ const Testimonials = () => {
   }
 
   return (
-    <div className='w-full max-w-none md:max-w-6xl lg:rounded-e-[56px] bg-[#12895E] px-4 sm:px-6 md:px-8 py-4 lg:mt-16 overflow-hidden'>
+    <div className='w-full max-w-none md:max-w-6xl lg:rounded-e-[56px] bg-[#12895E] px-4 sm:px-6 md:px-8 py-4 lg:mt-16'>
       <div className='w-full max-w-none md:max-w-5xl mx-auto mb-6 md:mb-10'>
         <motion.h2 
           className='text-white font-bold text-2xl sm:text-3xl md:text-4xl md:block hidden pt-8 md:pt-12 pb-12 md:pb-24 text-center md:text-left'
@@ -89,10 +85,10 @@ const Testimonials = () => {
           />
         </div>
         
-        <div className='h-full md:rounded-4xl md:py-8 flex md:items-center md:justify-center md:relative overflow-hidden'>
+        <div className='h-full md:rounded-4xl md:py-8 flex md:items-center md:justify-center md:relative'>
 
           {/* Image for large screens - original positioning */}
-          <div className='md:block hidden absolute inset-0 overflow-hidden'>
+          <div className='md:block hidden absolute inset-0'>
             <Image 
               src="/images/testimonial.png" 
               alt="Testimonial Background" 
@@ -101,12 +97,8 @@ const Testimonials = () => {
             />
           </div>
           
-          <motion.div 
-            className='bg-white md:rounded-4xl rounded-b-3xl md:rounded-t-3xl relative md:-right-32 lg:-right-64 md:-top-8 lg:-top-18 xl:-right-64 xl:-top-18 p-4 sm:p-5 md:p-6 w-full max-w-full sm:max-w-md md:max-w-sm lg:max-w-md xl:max-w-lg mx-auto md:mx-0 z-10'
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
+          <div 
+            className='bg-white md:rounded-4xl rounded-b-3xl md:rounded-t-3xl relative md:-right-32 lg:-right-64 md:-top-8 lg:-top-18 xl:-right-64 xl:-top-18 p-4 sm:p-5 md:p-6 w-full max-w-full sm:max-w-md md:max-w-sm lg:max-w-md xl:max-w-lg overflow-hidden mx-auto md:mx-0 z-10'
           >
 
             <div className='flex justify-center relative -top-6 sm:-top-8 md:-top-10 -left-8 sm:-left-12 md:-left-16 transform overflow-hidden'>
@@ -132,15 +124,11 @@ const Testimonials = () => {
             </div>
 
             <div className='text-center overflow-hidden relative py-2 mt-0 sm:mt-1 md:mt-0'>
-              <motion.div 
+              <div 
                 className='flex transition-transform duration-500 ease-in-out'
                 style={{
                   transform: `translateX(-${currentTestimonial * 100}%)`
                 }}
-                key={currentTestimonial} // Force re-render for animation
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
               >
                 {testimonials.map((testimonial, index) => (
                   <div key={index} className='w-full flex-shrink-0 px-3 sm:px-4 md:px-2'>
@@ -166,9 +154,9 @@ const Testimonials = () => {
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         
         </div>
         

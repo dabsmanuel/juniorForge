@@ -6,10 +6,13 @@
   --font-mono: var(--font-museo-moderno);
 }
 
-
+*{
+  box-sizing: border-box;
+  /* border: 1px solid red; */
+}
 
 body {
-  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;;
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
 }
 
 /* Specific font assignments */
