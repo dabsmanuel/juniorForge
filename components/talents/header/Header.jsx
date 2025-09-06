@@ -61,12 +61,22 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup"
         style={{
-          backgroundImage: `url('/images/talent.png')`
+          backgroundImage: `url('/images/talenthero.png')`
         }}
       />
       
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/35 z-10" />
+      {/* Gradient Overlay */}
+      <div 
+        className="absolute inset-0 z-10"
+        style={{
+          // background: `linear-gradient(135deg, #37ffb7 0%, #c1eddd 100%)`,
+          mixBlendMode: 'overlay',
+          opacity: 0.7
+        }}
+      />
+      
+      {/* Additional dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/40 z-15" />
       
       {/* Content Container */}
       <div className="relative z-20 min-h-screen flex items-center">

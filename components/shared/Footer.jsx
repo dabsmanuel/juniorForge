@@ -35,7 +35,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex gap-8 items-center lg:justify-end justify-center mt-8 text-white pb-16">
+        <div className="flex gap-1 items-center lg:justify-end justify-center mt-8 text-white pb-16">
           <a href="#" className="hover:text-[#685EFC] transition-colors" aria-label="Facebook">
             <FaFacebookSquare className="w-8 h-8"/>
           </a>
