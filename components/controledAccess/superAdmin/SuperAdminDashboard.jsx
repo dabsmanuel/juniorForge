@@ -88,18 +88,19 @@ const SuperAdminDashboard = () => {
 
   const statsCards = [
     {
+      title: 'Approved Admins',
+      value: statusStats.approved || 0,
+      icon: UserCheck,
+      color: 'bg-green-500'
+    },
+    {
       title: 'Total Admins',
       value: totalRegularAdmins,
       icon: Users,
       color: 'bg-blue-500',
       change: `+${growth}%`
     },
-    {
-      title: 'Approved Admins',
-      value: statusStats.approved || 0,
-      icon: UserCheck,
-      color: 'bg-green-500'
-    },
+    
     {
       title: 'Pending Approval',
       value: statusStats.pending || 0,
