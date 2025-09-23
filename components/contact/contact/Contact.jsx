@@ -81,7 +81,7 @@ const Contact = () => {
             Email Address: contact@juniorforge.com
           </motion.p>
           <motion.p variants={contactItemVariants}>
-            Phone Number: +234 815 8106 602
+            Phone Number: +234 815 8106 602, +44 7990 136683
           </motion.p>
           <motion.div variants={contactItemVariants} className="flex flex-col gap-2">
             <p>Social Media:</p>
