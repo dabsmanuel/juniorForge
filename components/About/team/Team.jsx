@@ -84,7 +84,7 @@ const Team = () => {
       </div>
       
       <motion.div 
-        className="gap-6 mt-10 w-full mx-auto flex justify-center items-center"
+        className="gap-6 mt-10 w-full mx-auto flex lg:flex-row flex-col justify-center items-center"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
