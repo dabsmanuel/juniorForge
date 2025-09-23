@@ -140,7 +140,7 @@ const Form = () => {
     }
     
     try {
-      const response = await fetch('http://localhost:5000/api/form/startup', {
+      const response = await fetch('https://juniorforge.onrender.com/api/form/startup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
