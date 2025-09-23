@@ -289,21 +289,6 @@ const Form = () => {
           </button>
         </motion.div>
 
-        {/* Submit Message */}
-        {submitMessage.message && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mb-6 p-4 rounded-lg ${
-              submitMessage.type === 'success' 
-                ? 'bg-green-100 text-green-800 border border-green-200' 
-                : 'bg-red-100 text-red-800 border border-red-200'
-            }`}
-          >
-            {submitMessage.message}
-          </motion.div>
-        )}
-
         <div className='mt-6'>
           <AnimatePresence mode="wait">
             {tab === 'startups' && (
@@ -522,6 +507,44 @@ const Form = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Submission Modal */}
+      <AnimatePresence>
+        {submitMessage.message && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={`bg-white p-8 rounded-lg shadow-xl max-w-sm w-full ${
+                submitMessage.type === 'success' ? 'border-2 border-[#12895E]' : 'border-2 border-red-500'
+              }`}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p className={`text-center mb-6 font-medium ${
+                submitMessage.type === 'success' ? 'text-[#12895E]' : 'text-red-700'
+              }`}>
+                {submitMessage.message}
+              </p>
+              <button
+                onClick={() => setSubmitMessage({ type: '', message: '' })}
+                className={`w-full py-3 rounded-full font-medium transition-colors ${
+                  submitMessage.type === 'success'
+                    ? 'bg-[#12895E] text-white hover:bg-[#37ffb7] hover:text-black'
+                    : 'bg-red-500 text-white hover:bg-red-600'
+                }`}
+              >
+                OK
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.section>
   )
 }
