@@ -92,7 +92,6 @@ export const whyWeAreDifferent = [
   },
 ]
 
-
 export const startups = [
   {
     id: 1,
@@ -119,4 +118,28 @@ export const startups = [
   },
 ]
 
+export const team = [
+  {
+    id: 1, 
+    team: '/images/dabs.png',
+    name: "Dabs Emmanuel Oyibo",
+    title: "Founder, CEO"
+  },
+  {
+    id: 2, 
+    team: '/images/josh.png',
+    name: "Joshua Otuonye",
+    title: "Co-Founder, COO"
+  },
+  {
+    id: 3, 
+    team: '/images/mirabel.png',
+    name: "Mirabel Ogheneruona Osiobe",
+    title: "Design Lead, VA"
+  },
+  // {
+  //   id: 4, 
+  //   team: '/images/precious.png'
+  // },
+]
 
