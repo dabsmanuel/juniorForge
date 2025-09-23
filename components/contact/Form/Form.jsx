@@ -6,29 +6,180 @@ const Form = () => {
   const [tab, setTab] = useState('startups')
   const [cvFile, setCvFile] = useState(null)
   const [coverLetterFile, setCoverLetterFile] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState({ type: '', message: '' })
+  
+  // Form states for controlled inputs
+  const [startupForm, setStartupForm] = useState({
+    fullName: '',
+    companyName: '',
+    email: '',
+    website: '',
+    aboutStartup: '',
+    roleDescription: '',
+    hiringTimeline: ''
+  })
+  
+  const [talentForm, setTalentForm] = useState({
+    fullName: '',
+    email: '',
+    linkedIn: '',
+    preferredRole: '',
+    availability: ''
+  })
 
   const handleCvUpload = (e) => {
     const file = e.target.files[0]
+    if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
+      setSubmitMessage({ type: 'error', message: 'File size must be less than 10MB' })
+      return
+    }
     setCvFile(file)
+    setSubmitMessage({ type: '', message: '' })
   }
 
   const handleCoverLetterUpload = (e) => {
     const file = e.target.files[0]
+    if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
+      setSubmitMessage({ type: 'error', message: 'File size must be less than 10MB' })
+      return
+    }
     setCoverLetterFile(file)
+    setSubmitMessage({ type: '', message: '' })
   }
 
-  const handleTalentSubmit = (e) => {
-    e.preventDefault()
-    // Handle form submission here
-    console.log('CV File:', cvFile)
-    console.log('Cover Letter File:', coverLetterFile)
-    // Add your form submission logic
+  const handleStartupInputChange = (field, value) => {
+    setStartupForm(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleStartupSubmit = (e) => {
+  const handleTalentInputChange = (field, value) => {
+    setTalentForm(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleTalentSubmit = async (e) => {
     e.preventDefault()
-    // Handle startup form submission
-    console.log('Startup form submitted')
+    setIsSubmitting(true)
+    setSubmitMessage({ type: '', message: '' })
+
+    // Validation
+    if (!talentForm.fullName || !talentForm.email) {
+      setSubmitMessage({ type: 'error', message: 'Please fill in all required fields' })
+      setIsSubmitting(false)
+      return
+    }
+
+    if (!cvFile) {
+      setSubmitMessage({ type: 'error', message: 'CV file is required' })
+      setIsSubmitting(false)
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('fullName', talentForm.fullName)
+    formData.append('email', talentForm.email)
+    formData.append('linkedIn', talentForm.linkedIn)
+    formData.append('preferredRole', talentForm.preferredRole)
+    formData.append('availability', talentForm.availability)
+    if (cvFile) formData.append('cvFile', cvFile)
+    if (coverLetterFile) formData.append('coverLetterFile', coverLetterFile)
+  
+    try {
+      const response = await fetch('http://localhost:5000/api/form/talent', {
+        method: 'POST',
+        body: formData
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setSubmitMessage({ 
+          type: 'success', 
+          message: 'Application submitted successfully! Check your email for confirmation.' 
+        })
+        // Reset form
+        setTalentForm({
+          fullName: '',
+          email: '',
+          linkedIn: '',
+          preferredRole: '',
+          availability: ''
+        })
+        setCvFile(null)
+        setCoverLetterFile(null)
+        // Reset file inputs
+        const fileInputs = document.querySelectorAll('input[type="file"]')
+        fileInputs.forEach(input => input.value = '')
+      } else {
+        setSubmitMessage({ 
+          type: 'error', 
+          message: data.message || 'Form submission failed. Please try again.' 
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      setSubmitMessage({ 
+        type: 'error', 
+        message: 'Network error. Please check your connection and try again.' 
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleStartupSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitMessage({ type: '', message: '' })
+    
+    // Validation
+    if (!startupForm.fullName || !startupForm.companyName || !startupForm.email || 
+        !startupForm.aboutStartup || !startupForm.roleDescription) {
+      setSubmitMessage({ type: 'error', message: 'Please fill in all required fields' })
+      setIsSubmitting(false)
+      return
+    }
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/form/startup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(startupForm)
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setSubmitMessage({ 
+          type: 'success', 
+          message: 'Application submitted successfully! Check your email for confirmation.' 
+        })
+        // Reset form
+        setStartupForm({
+          fullName: '',
+          companyName: '',
+          email: '',
+          website: '',
+          aboutStartup: '',
+          roleDescription: '',
+          hiringTimeline: ''
+        })
+      } else {
+        setSubmitMessage({ 
+          type: 'error', 
+          message: data.message || 'Form submission failed. Please try again.' 
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      setSubmitMessage({ 
+        type: 'error', 
+        message: 'Network error. Please check your connection and try again.' 
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   // Animation variants
@@ -111,7 +262,10 @@ const Form = () => {
           variants={tabVariants}
         >
           <button
-            onClick={() => setTab('startups')}
+            onClick={() => {
+              setTab('startups')
+              setSubmitMessage({ type: '', message: '' })
+            }}
             className={`lg:px-12 px-8 py-3 rounded-full font-medium transition-colors w-full ${
               tab === 'startups'
                 ? 'bg-[#12895E] text-white border-2 border-[#c1eddd]'
@@ -121,7 +275,10 @@ const Form = () => {
             For Startups
           </button>
           <button
-            onClick={() => setTab('talents')}
+            onClick={() => {
+              setTab('talents')
+              setSubmitMessage({ type: '', message: '' })
+            }}
             className={`lg:px-12 px-8 py-3 rounded-full font-medium transition-colors w-full ${
               tab === 'talents'
                 ? 'bg-[#12895E] text-white border-2 border-[#c1eddd]'
@@ -131,6 +288,21 @@ const Form = () => {
             For Talents
           </button>
         </motion.div>
+
+        {/* Submit Message */}
+        {submitMessage.message && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mb-6 p-4 rounded-lg ${
+              submitMessage.type === 'success' 
+                ? 'bg-green-100 text-green-800 border border-green-200' 
+                : 'bg-red-100 text-red-800 border border-red-200'
+            }`}
+          >
+            {submitMessage.message}
+          </motion.div>
+        )}
 
         <div className='mt-6'>
           <AnimatePresence mode="wait">
@@ -142,43 +314,53 @@ const Form = () => {
                 animate="visible"
                 exit="exit"
               >
-                <div className='space-y-6' onSubmit={handleStartupSubmit}>
+                <form className='space-y-6' onSubmit={handleStartupSubmit}>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Full name*'
+                      value={startupForm.fullName}
+                      onChange={(e) => handleStartupInputChange('fullName', e.target.value)}
                       required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Company name*'
+                      value={startupForm.companyName}
+                      onChange={(e) => handleStartupInputChange('companyName', e.target.value)}
                       required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='email'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Email address*'
+                      value={startupForm.email}
+                      onChange={(e) => handleStartupInputChange('email', e.target.value)}
                       required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
-                      placeholder='Website:'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
+                      placeholder='Website'
+                      value={startupForm.website}
+                      onChange={(e) => handleStartupInputChange('website', e.target.value)}
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <textarea
                       rows='3'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Tell us about your startup*'
+                      value={startupForm.aboutStartup}
+                      onChange={(e) => handleStartupInputChange('aboutStartup', e.target.value)}
                       required
                     ></textarea>
                   </motion.div>
@@ -186,8 +368,10 @@ const Form = () => {
                   <motion.div variants={inputVariants}>
                     <textarea
                       rows='4'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Role description*'
+                      value={startupForm.roleDescription}
+                      onChange={(e) => handleStartupInputChange('roleDescription', e.target.value)}
                       required
                     ></textarea>
                   </motion.div>
@@ -195,20 +379,28 @@ const Form = () => {
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
-                      placeholder='Hiring timeline:*'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
+                      placeholder='Hiring timeline'
+                      value={startupForm.hiringTimeline}
+                      onChange={(e) => handleStartupInputChange('hiringTimeline', e.target.value)}
                     />
                   </motion.div>
+                  
                   <motion.button
-                    onClick={handleStartupSubmit}
-                    className='w-full lg:w-fit bg-[#12895E] text-white py-3 px-10 rounded-full font-medium hover:bg-[#37ffb7] hover:text-black transition-colors border border-[#c1eddd]'
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full lg:w-fit py-3 px-10 rounded-full font-medium transition-all border border-[#c1eddd] ${
+                      isSubmitting 
+                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                        : 'bg-[#12895E] text-white hover:bg-[#37ffb7] hover:text-black'
+                    }`}
                     variants={inputVariants}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={!isSubmitting ? { scale: 1.05 } : {}}
+                    whileTap={!isSubmitting ? { scale: 0.95 } : {}}
                   >
-                    Find Talents
+                    {isSubmitting ? 'Submitting...' : 'Find Talents'}
                   </motion.button>
-                </div>
+                </form>
               </motion.div>
             )}
 
@@ -220,41 +412,52 @@ const Form = () => {
                 animate="visible"
                 exit="exit"
               >
-                <div className='space-y-6' onSubmit={handleTalentSubmit}>
+                <form className='space-y-6' onSubmit={handleTalentSubmit}>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Full name*'
+                      value={talentForm.fullName}
+                      onChange={(e) => handleTalentInputChange('fullName', e.target.value)}
                       required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='email'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
-                      placeholder='Email address'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
+                      placeholder='Email address*'
+                      value={talentForm.email}
+                      onChange={(e) => handleTalentInputChange('email', e.target.value)}
+                      required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='LinkedIn Profile/Portfolio Link'
+                      value={talentForm.linkedIn}
+                      onChange={(e) => handleTalentInputChange('linkedIn', e.target.value)}
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Preferred Role'
+                      value={talentForm.preferredRole}
+                      onChange={(e) => handleTalentInputChange('preferredRole', e.target.value)}
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
-                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#c1eddd]'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
                       placeholder='Availability'
+                      value={talentForm.availability}
+                      onChange={(e) => handleTalentInputChange('availability', e.target.value)}
                     />
                   </motion.div>
                   
@@ -271,7 +474,9 @@ const Form = () => {
                         className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
                         required
                       />
-                      <div className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-gray-400 cursor-pointer hover:border-[#12895E] transition-colors'>
+                      <div className={`w-full px-4 py-3 bg-white border-2 rounded-lg cursor-pointer transition-colors ${
+                        cvFile ? 'border-[#12895E] text-[#12895E]' : 'border-[#c1eddd] text-gray-400 hover:border-[#12895E]'
+                      }`}>
                         {cvFile ? cvFile.name : 'Choose CV file (PDF, DOC, DOCX)'}
                       </div>
                     </div>
@@ -289,22 +494,29 @@ const Form = () => {
                         onChange={handleCoverLetterUpload}
                         className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
                       />
-                      <div className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-gray-400 cursor-pointer hover:border-[#12895E] transition-colors'>
+                      <div className={`w-full px-4 py-3 bg-white border-2 rounded-lg cursor-pointer transition-colors ${
+                        coverLetterFile ? 'border-[#12895E] text-[#12895E]' : 'border-[#c1eddd] text-gray-400 hover:border-[#12895E]'
+                      }`}>
                         {coverLetterFile ? coverLetterFile.name : 'Choose cover letter file (PDF, DOC, DOCX)'}
                       </div>
                     </div>
                   </motion.div>
 
                   <motion.button
-                    onClick={handleTalentSubmit}
-                    className='w-full lg:w-fit bg-[#12895E] text-white py-3 px-10 rounded-full border border-[#c1eddd] font-medium hover:bg-[#37ffb7] hover:text-black transition-colors'
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full lg:w-fit py-3 px-10 rounded-full font-medium transition-all border border-[#c1eddd] ${
+                      isSubmitting 
+                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                        : 'bg-[#12895E] text-white hover:bg-[#37ffb7] hover:text-black'
+                    }`}
                     variants={inputVariants}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={!isSubmitting ? { scale: 1.05 } : {}}
+                    whileTap={!isSubmitting ? { scale: 0.95 } : {}}
                   >
-                    Apply Now
+                    {isSubmitting ? 'Submitting...' : 'Apply Now'}
                   </motion.button>
-                </div>
+                </form>
               </motion.div>
             )}
           </AnimatePresence>

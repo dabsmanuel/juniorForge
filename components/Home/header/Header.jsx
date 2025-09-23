@@ -67,10 +67,13 @@ const Header = () => {
         
         <motion.div 
           className="absolute top-18 right-34 hidden md:block"
-          animate={floatAnimation}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
+          animate={{
+              rotate: [0, 10, -10, 0],
+              ...floatAnimation
+            }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
           viewport={{ once: false }}
         >
           <Image

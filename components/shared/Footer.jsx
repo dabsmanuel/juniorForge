@@ -1,10 +1,17 @@
+'use client';
 import Image from "next/image"
 import { FaFacebookSquare, FaInstagramSquare} from "react-icons/fa";
 import { FaLinkedin, FaSquareXTwitter } from "react-icons/fa6";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
+
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+  if (pathname === '/auth' || pathname.startsWith('/auth/')) {
+    return null;
+  }
 
   return (
     <footer className="bg-[#16252D] ">
@@ -36,17 +43,17 @@ const Footer = () => {
         </div>
 
         <div className="flex gap-1 items-center lg:justify-end justify-center mt-8 text-white pb-16">
-          <a href="#" className="hover:text-[#685EFC] transition-colors" aria-label="Facebook">
+          <a href="https://www.facebook.com/profile.php?id=100063945017359" className="hover:text-[#685EFC] transition-colors" aria-label="Facebook">
             <FaFacebookSquare className="w-8 h-8"/>
           </a>
-          <a href="#" className="hover:text-[#685EFC] transition-colors" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/company/junior-forge/posts/?feedView=all" className="hover:text-[#685EFC] transition-colors" aria-label="LinkedIn">
             <FaLinkedin className="w-8 h-8"/>
           </a>
-          <a href="#" className="hover:text-[#685EFC] transition-colors" aria-label="Instagram">
+          <a href="https://www.instagram.com/junior_forge?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="hover:text-[#685EFC] transition-colors" aria-label="Instagram">
             <FaInstagramSquare className="w-8 h-8"/>
           </a>
 
-          <a href="#" className="hover:text-[#685EFC] transition-colors" aria-label="Twitter">
+          <a href="https://x.com/junior_forge" className="hover:text-[#685EFC] transition-colors" aria-label="Twitter">
             <FaSquareXTwitter className="w-8 h-8"/>
           </a>
         </div>

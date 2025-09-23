@@ -1,6 +1,8 @@
 'use client'
 import React from 'react'
 import { motion } from "framer-motion"
+import { FaFacebookSquare, FaInstagramSquare} from "react-icons/fa";
+import { FaLinkedin, FaSquareXTwitter } from "react-icons/fa6";
 
 const Contact = () => {
   // Animation variants
@@ -76,14 +78,28 @@ const Contact = () => {
           variants={cardVariants}
         >
           <motion.p variants={contactItemVariants}>
-            Email Address: juniorforgeltd@gmail.com
+            Email Address: contact@juniorforge.com
           </motion.p>
           <motion.p variants={contactItemVariants}>
-            Phone Number: +1 (234) 567-8901
+            Phone Number: +234 815 8106 602
           </motion.p>
-          <motion.p variants={contactItemVariants}>
-            Social Media:
-          </motion.p>
+          <motion.div variants={contactItemVariants} className="flex flex-col gap-2">
+            <p>Social Media:</p>
+            <div className="flex gap-1 items-center">
+              <a href="https://www.facebook.com/profile.php?id=100063945017359" className="hover:text-[#685EFC] transition-colors" aria-label="Facebook">
+                <FaFacebookSquare className="w-8 h-8"/>
+              </a>
+              <a href="https://www.linkedin.com/company/junior-forge/posts/?feedView=all" className="hover:text-[#685EFC] transition-colors" aria-label="LinkedIn">
+                <FaLinkedin className="w-8 h-8"/>
+              </a>
+              <a href="https://www.instagram.com/junior_forge?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="hover:text-[#685EFC] transition-colors" aria-label="Instagram">
+                <FaInstagramSquare className="w-8 h-8"/>
+              </a>
+              <a href="https://x.com/junior_forge" className="hover:text-[#685EFC] transition-colors" aria-label="Twitter">
+                <FaSquareXTwitter className="w-8 h-8"/>
+              </a>
+            </div>
+          </motion.div>
         </motion.div>      
       </div>
     </motion.div>

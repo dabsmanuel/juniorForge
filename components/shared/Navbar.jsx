@@ -12,6 +12,10 @@ export default function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
 
+
+  if (pathname === '/auth' || pathname.startsWith('/auth/')) {
+    return null;
+  }
   // Check if current page should have glassmorphic effect
   const glassmorphicPages = ['/talents', '/startups', '/contact'];
   const isGlassmorphic = glassmorphicPages.includes(pathname);
