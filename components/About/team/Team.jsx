@@ -61,7 +61,7 @@ const Team = () => {
   }
 
   return (
-    <div className='max-w-6xl mx-auto mt-12 pt-6 px-4'>
+    <div className='max-w-6xl mx-auto my-12 py-6 px-4'>
       <div className='text-center'>
         <motion.h2 
           className='font-bold text-5xl mb-4'
@@ -124,7 +124,7 @@ const Team = () => {
                   </motion.div>
                 </motion.div>
                 <motion.div 
-                  className="mt-4"
+                  className="mt-4 lg:text-start text-center"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
