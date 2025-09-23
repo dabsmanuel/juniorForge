@@ -1,70 +1,129 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, UserCheck, UserX, Shield, TrendingUp, Calendar, Clock } from 'lucide-react';
 import LoadingSpinner from '../layout/LoadingSpinner';
+import { useApi } from '../../../hooks/useApi';
+import { useAuth } from '../../../hooks/useAuth';
+import { authApi } from '../../../lib/util';
 
-const SuperAdminDashboard = ({ data, loading }) => {
-  if (loading) {
-    return <LoadingSpinner message="Loading dashboard..." />;
-  }
+const SuperAdminDashboard = () => {
+  const { admin, token, loading: authLoading } = useAuth();
+  const [stats, setStats] = useState(null);
+  const [admins, setAdmins] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { executeAsync } = useApi();
+
+  useEffect(() => {
+    if (!authLoading && admin && token && admin.role === 'super_admin') {
+      loadData();
+    } else {
+      setIsLoading(false);
+    }
+  }, [authLoading, admin, token]);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const [statsResponse, adminsResponse] = await Promise.all([
+        executeAsync(() => authApi.getAdminStats(token)),
+        executeAsync(() => authApi.getAllAdmins(token))
+      ]);
+      setStats(statsResponse.data);
+      setAdmins(adminsResponse.data);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const timeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + " years ago";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + " months ago";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + " days ago";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + " hours ago";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + " minutes ago";
+    return Math.floor(seconds) + " seconds ago";
+  };
 
   const getStatusStats = () => {
-    if (!data?.data?.statusStats) return {};
-    return data.data.statusStats.reduce((acc, stat) => {
+    if (!stats?.statusStats) return {};
+    return stats.statusStats.reduce((acc, stat) => {
       acc[stat._id] = stat.count;
       return acc;
     }, {});
   };
 
   const getRoleStats = () => {
-    if (!data?.data?.roleStats) return {};
-    return data.data.roleStats.reduce((acc, stat) => {
+    if (!stats?.roleStats) return {};
+    return stats.roleStats.reduce((acc, stat) => {
       acc[stat._id] = stat.count;
       return acc;
     }, {});
   };
 
+  if (authLoading || isLoading) {
+    return <LoadingSpinner message="Loading dashboard..." />;
+  }
+
+  if (!admin || admin.role !== 'super_admin') {
+    return <div className="text-center text-red-600">Not authorized to access this dashboard.</div>;
+  }
+
   const statusStats = getStatusStats();
   const roleStats = getRoleStats();
 
+  const totalRegularAdmins = (stats?.totalAdmins || 0) - (roleStats.super_admin || 0);
+  const previousTotal = (totalRegularAdmins - stats?.recentAdmins) || 1;
+  const growth = ((stats?.recentAdmins || 0) / previousTotal * 100).toFixed(1);
+
   const statsCards = [
-    {
-      title: 'Total Admins',
-      value: data?.data?.totalAdmins || 0,
-      icon: Users,
-      color: 'bg-blue-500',
-      change: '+2.5%'
-    },
     {
       title: 'Approved Admins',
       value: statusStats.approved || 0,
       icon: UserCheck,
-      color: 'bg-green-500',
-      change: '+5.2%'
+      color: 'bg-green-500'
     },
+    {
+      title: 'Total Admins',
+      value: totalRegularAdmins,
+      icon: Users,
+      color: 'bg-blue-500',
+      change: `+${growth}%`
+    },
+    
     {
       title: 'Pending Approval',
       value: statusStats.pending || 0,
       icon: Clock,
-      color: 'bg-yellow-500',
-      change: '+12.3%'
+      color: 'bg-yellow-500'
     },
     {
       title: 'Super Admins',
       value: roleStats.super_admin || 0,
       icon: Shield,
-      color: 'bg-purple-500',
-      change: '0%'
+      color: 'bg-purple-500'
     }
   ];
 
-  const recentActivity = [
-    { action: 'New admin registered', user: 'John Doe', time: '2 hours ago', type: 'registration' },
-    { action: 'Admin approved', user: 'Jane Smith', time: '4 hours ago', type: 'approval' },
-    { action: 'Admin suspended', user: 'Mike Johnson', time: '1 day ago', type: 'suspension' },
-    { action: 'Permission updated', user: 'Sarah Wilson', time: '2 days ago', type: 'update' }
-  ];
+  const recentActivity = admins
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4)
+    .map((admin) => ({
+      action: 'New admin registered',
+      user: admin.name || admin.username || 'Anonymous',
+      time: timeAgo(admin.createdAt),
+      type: 'registration'
+    }));
 
   const getActivityIcon = (type) => {
     switch (type) {
@@ -92,7 +151,7 @@ const SuperAdminDashboard = ({ data, loading }) => {
               <div>
                 <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                 <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-sm text-green-600 mt-1">{stat.change}</p>
+                {stat.change && <p className="text-sm text-green-600 mt-1">{stat.change}</p>}
               </div>
               <div className={`${stat.color} p-3 rounded-lg`}>
                 <stat.icon className="w-6 h-6 text-white" />
@@ -136,7 +195,7 @@ const SuperAdminDashboard = ({ data, loading }) => {
                 <div>
                   <p className="font-medium text-gray-900">Manage All Admins</p>
                   <p className="text-sm text-gray-500">
-                    View and manage {data?.data?.totalAdmins || 0} total admins
+                    View and manage {totalRegularAdmins} total admins
                   </p>
                 </div>
               </div>
@@ -181,4 +240,4 @@ const SuperAdminDashboard = ({ data, loading }) => {
   );
 };
 
-export default SuperAdminDashboard;  
+export default SuperAdminDashboard;
