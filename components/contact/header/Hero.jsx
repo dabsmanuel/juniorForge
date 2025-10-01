@@ -41,12 +41,14 @@ const Hero = () => {
   }
 
   return (
-    <section className="relative h-[75vh] overflow-hidden bg-fixed">
+    <section className="relative h-[50vh] sm:h-[75vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup"
         style={{
-          backgroundImage: `url('/images/contact.png')`
+          backgroundImage: `url('/images/contact.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center'
         }}
       />
       
@@ -64,7 +66,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-black/20 z-15" />
       
       {/* Content Container */}
-      <div className="relative z-20 min-h-screen flex items-center">
+      <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="max-w-6xl lg:px-16 lg:text-start text-center tracking-tighter"
