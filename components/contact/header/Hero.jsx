@@ -44,7 +44,7 @@ const Hero = () => {
     <section className="relative h-[50vh] sm:h-[75vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup"
+        className="absolute inset-0 bg-no-repeat z-0 startup"
         style={{
           backgroundImage: `url('/images/contact.png')`,
           backgroundSize: 'cover',
