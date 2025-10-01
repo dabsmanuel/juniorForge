@@ -56,12 +56,14 @@ const TalentHero = () => {
   }
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-fixed">
+    <section className="relative h-[50vh] sm:h-[75vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup"
         style={{
-          backgroundImage: `url('/images/startuphero.png')`
+          backgroundImage: `url('/images/startuphero.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center'
         }}
       />
       {/* Gradient Overlay */}
@@ -78,7 +80,7 @@ const TalentHero = () => {
       <div className="absolute inset-0 bg-black/40 z-15" />
       
       {/* Content Container */}
-      <div className="relative z-20 min-h-screen flex items-center">
+      <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="max-w-6xl lg:px-16 lg:text-start text-center tracking-tighter"
@@ -89,7 +91,7 @@ const TalentHero = () => {
           >
             {/* Heading */}
             <motion.div 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white lg:mb-6 lg:mt-0 mt-8 leading-tight"
               variants={headingVariants}
             >
               <h2>Build Your</h2>
@@ -98,7 +100,7 @@ const TalentHero = () => {
             
             {/* Description */}
             <motion.p 
-              className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-8 leading-tight"
+              className="text-lg sm:text-xl lg:text-2xl text-white lg:mb-8 my-4 leading-tight font-medium"
               variants={descriptionVariants}
             >
               We connect high-potential talents with innovative startups ready to grow.
@@ -108,7 +110,7 @@ const TalentHero = () => {
             <motion.div variants={buttonVariants}>
               <Link 
                 href='/contact' 
-                className="inline-flex items-center px-32 py-4 bg-[#12895E] hover:bg-[#0f7a4b] text-white font-semibold text-lg rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl border border-[#37ffb7]"
+                className="inline-flex items-center px-8 sm:px-16 lg:px-32 py-3 sm:py-4 bg-[#12895E] hover:bg-[#0f7a4b] text-white font-semibold text-base sm:text-lg rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl border border-[#37ffb7]"
               >
                 <motion.span
                   whileHover={{ scale: 1.05 }}
