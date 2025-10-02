@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Download, Trash2, Eye, Building, User, Calendar, FileText, Mail, Clock, CheckSquare } from 'lucide-react';
+import { Search, Filter, Download, Trash2, Eye, Building, User, Calendar, FileText, Mail, Clock, CheckSquare, RefreshCw } from 'lucide-react';
 import { submissionsApi, emailApi, formatDate } from '../../lib/util';
 import { EmailModal, BulkEmailModal, EmailHistory } from './email/Email';
 
@@ -11,6 +11,7 @@ const SubmissionsView = ({ admin, token }) => {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   
   // Email states
@@ -40,6 +41,20 @@ const SubmissionsView = ({ admin, token }) => {
       console.error('Error loading submissions:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setError(null);
+    try {
+      const response = await submissionsApi.getAllSubmissions(token);
+      setSubmissions(response.data || []);
+    } catch (error) {
+      setError(error.message);
+      console.error('Error refreshing submissions:', error);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -177,8 +192,20 @@ const SubmissionsView = ({ admin, token }) => {
           <p className="text-gray-600">Manage form submissions from startups and talent</p>
         </div>
         
-        {/* Bulk Email Controls */}
+        {/* Action Controls */}
         <div className="flex items-center space-x-3">
+          {/* Refresh Button */}
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            title="Refresh submissions"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
+          
+          {/* Bulk Email Controls */}
           {selectMode ? (
             <>
               <button
