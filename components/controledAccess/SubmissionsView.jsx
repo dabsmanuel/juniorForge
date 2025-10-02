@@ -1,10 +1,7 @@
-'use client'
-
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Download, Trash2, Eye, Building, User, Calendar, FileText } from 'lucide-react';
-import { useApi } from '../../hooks/useApi';
-import { submissionsApi, formatDate } from '../../lib/util';
-import LoadingSpinner from './layout/LoadingSpinner';
+import { Search, Filter, Download, Trash2, Eye, Building, User, Calendar, FileText, Mail, Clock, CheckSquare } from 'lucide-react';
+import { submissionsApi, emailApi, formatDate } from '../../lib/util';
+import { EmailModal, BulkEmailModal, EmailHistory } from './email/Email';
 
 const SubmissionsView = ({ admin, token }) => {
   const [submissions, setSubmissions] = useState([]);
@@ -13,7 +10,16 @@ const SubmissionsView = ({ admin, token }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const { loading, error, executeAsync } = useApi();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // Email states
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showBulkEmailModal, setShowBulkEmailModal] = useState(false);
+  const [showEmailHistory, setShowEmailHistory] = useState(false);
+  const [emailHistoryData, setEmailHistoryData] = useState([]);
+  const [selectedForBulk, setSelectedForBulk] = useState([]);
+  const [selectMode, setSelectMode] = useState(false);
 
   useEffect(() => {
     loadSubmissions();
@@ -24,23 +30,26 @@ const SubmissionsView = ({ admin, token }) => {
   }, [submissions, filterType, searchTerm]);
 
   const loadSubmissions = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await executeAsync(() => submissionsApi.getAllSubmissions(token));
+      const response = await submissionsApi.getAllSubmissions(token);
       setSubmissions(response.data || []);
     } catch (error) {
+      setError(error.message);
       console.error('Error loading submissions:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const filterSubmissions = () => {
     let filtered = submissions;
 
-    // Filter by type
     if (filterType !== 'all') {
       filtered = filtered.filter(submission => submission.type === filterType);
     }
 
-    // Filter by search term
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       filtered = filtered.filter(submission =>
@@ -59,43 +68,85 @@ const SubmissionsView = ({ admin, token }) => {
     }
 
     try {
-      await executeAsync(() => submissionsApi.deleteSubmission(token, submissionId));
+      await submissionsApi.deleteSubmission(token, submissionId);
       setSubmissions(submissions.filter(s => s._id !== submissionId));
     } catch (error) {
+      alert(`Failed to delete: ${error.message}`);
       console.error('Error deleting submission:', error);
     }
   };
 
-
   const handleDownload = async (submissionId, fileType, fileName) => {
     try {
-      console.log('Downloading:', { submissionId, fileType, fileName }); // Debug log
-      
       const response = await submissionsApi.downloadFile(token, submissionId, fileType);
-      
-      // Get the blob from response
       const blob = await response.blob();
-      
-      // Create object URL for the blob
       const url = window.URL.createObjectURL(blob);
-      
-      // Create temporary anchor element to trigger download
       const link = document.createElement('a');
       link.href = url;
       link.download = fileName || `${fileType}_${submissionId}`;
-      
-      // Append to body, click, and cleanup
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
-      // Clean up the object URL
       window.URL.revokeObjectURL(url);
-      
     } catch (error) {
-      console.error('Error downloading file:', error);
       alert(`Failed to download file: ${error.message}`);
+      console.error('Error downloading file:', error);
     }
+  };
+
+  const handleSendEmail = async (emailData) => {
+    try {
+      await emailApi.sendEmailToSubmission(token, emailData.submissionId, {
+        subject: emailData.subject,
+        message: emailData.message
+      });
+      
+      // Reload submissions to get updated email history
+      await loadSubmissions();
+      alert('Email sent successfully!');
+    } catch (error) {
+      throw new Error(error.message || 'Failed to send email');
+    }
+  };
+
+  const handleSendBulkEmail = async (bulkData) => {
+    try {
+      await emailApi.sendBulkEmail(token, {
+        submissionIds: bulkData.submissionIds,
+        subject: bulkData.subject,
+        message: bulkData.message
+      });
+      
+      // Clear selection and reload
+      setSelectedForBulk([]);
+      setSelectMode(false);
+      await loadSubmissions();
+      alert(`Email sent to ${bulkData.submissionIds.length} recipient(s) successfully!`);
+    } catch (error) {
+      throw new Error(error.message || 'Failed to send bulk email');
+    }
+  };
+
+  const handleViewEmailHistory = async (submissionId) => {
+    try {
+      const response = await emailApi.getEmailHistory(token, submissionId);
+      setEmailHistoryData(response.data || []);
+      setShowEmailHistory(true);
+    } catch (error) {
+      alert(`Failed to load email history: ${error.message}`);
+      console.error('Error loading email history:', error);
+    }
+  };
+
+  const toggleSelectForBulk = (submission) => {
+    setSelectedForBulk(prev => {
+      const isSelected = prev.some(s => s._id === submission._id);
+      if (isSelected) {
+        return prev.filter(s => s._id !== submission._id);
+      } else {
+        return [...prev, submission];
+      }
+    });
   };
 
   const openModal = (submission) => {
@@ -109,21 +160,66 @@ const SubmissionsView = ({ admin, token }) => {
   };
 
   if (loading && submissions.length === 0) {
-    return <LoadingSpinner message="Loading submissions..." />;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#685EFC]"></div>
+        <span className="ml-3 text-gray-600">Loading submissions...</span>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
-        <p className="text-gray-600">Manage form submissions from startups and talent</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
+          <p className="text-gray-600">Manage form submissions from startups and talent</p>
+        </div>
+        
+        {/* Bulk Email Controls */}
+        <div className="flex items-center space-x-3">
+          {selectMode ? (
+            <>
+              <button
+                onClick={() => {
+                  setSelectMode(false);
+                  setSelectedForBulk([]);
+                }}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowBulkEmailModal(true)}
+                disabled={selectedForBulk.length === 0}
+                className="px-4 py-2 bg-[#685EFC] text-white rounded-lg text-sm font-medium hover:bg-[#5548d4] disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Send to {selectedForBulk.length}</span>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setSelectMode(true)}
+              className="px-4 py-2 bg-[#685EFC] text-white rounded-lg text-sm font-medium hover:bg-[#5548d4] flex items-center space-x-2"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Bulk Email</span>
+            </button>
+          )}
+        </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Filters and Search */}
       <div className="bg-white p-4 rounded-lg shadow-sm border">
         <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -135,7 +231,6 @@ const SubmissionsView = ({ admin, token }) => {
             />
           </div>
 
-          {/* Filter */}
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-gray-400" />
             <select
@@ -150,7 +245,6 @@ const SubmissionsView = ({ admin, token }) => {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="mt-4 flex space-x-6 text-sm text-gray-600">
           <div>Total: {filteredSubmissions.length}</div>
           <div>Startups: {filteredSubmissions.filter(s => s.type === 'startup').length}</div>
@@ -164,6 +258,11 @@ const SubmissionsView = ({ admin, token }) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                {selectMode && (
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Select
+                  </th>
+                )}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Applicant
                 </th>
@@ -184,15 +283,23 @@ const SubmissionsView = ({ admin, token }) => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredSubmissions.map((submission) => (
                 <tr key={submission._id} className="hover:bg-gray-50">
+                  {selectMode && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedForBulk.some(s => s._id === submission._id)}
+                        onChange={() => toggleSelectForBulk(submission)}
+                        className="w-4 h-4 text-[#685EFC] border-gray-300 rounded focus:ring-[#685EFC]"
+                      />
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         submission.type === 'startup' ? 'bg-green-100' : 'bg-purple-100'
                       }`}>
                         {submission.type === 'startup' ? (
-                          <Building className={`w-5 h-5 ${
-                            submission.type === 'startup' ? 'text-green-600' : 'text-purple-600'
-                          }`} />
+                          <Building className="w-5 h-5 text-green-600" />
                         ) : (
                           <User className="w-5 h-5 text-purple-600" />
                         )}
@@ -245,10 +352,31 @@ const SubmissionsView = ({ admin, token }) => {
                         <Eye className="w-4 h-4" />
                       </button>
                       
+                      <button
+                        onClick={() => {
+                          setSelectedSubmission(submission);
+                          setShowEmailModal(true);
+                        }}
+                        className="text-purple-600 hover:text-purple-900"
+                        title="Send Email"
+                      >
+                        <Mail className="w-4 h-4" />
+                      </button>
+                      
+                      {submission.emailHistory && submission.emailHistory.length > 0 && (
+                        <button
+                          onClick={() => handleViewEmailHistory(submission._id)}
+                          className="text-orange-600 hover:text-orange-900"
+                          title="Email History"
+                        >
+                          <Clock className="w-4 h-4" />
+                        </button>
+                      )}
+                      
                       {(admin?.permissions?.downloadFiles || admin?.role === 'super_admin') && 
                        submission.type === 'talent' && submission.cvFile && (
                         <button
-                          onClick={() => handleDownload(submission._id, 'cv')}
+                          onClick={() => handleDownload(submission._id, 'cv', submission.cvFile.filename)}
                           className="text-green-600 hover:text-green-900"
                           title="Download CV"
                         >
@@ -288,7 +416,7 @@ const SubmissionsView = ({ admin, token }) => {
         )}
       </div>
 
-      {/* Modal for submission details */}
+      {/* Modals */}
       {showModal && selectedSubmission && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
@@ -361,14 +489,13 @@ const SubmissionsView = ({ admin, token }) => {
                       <p className="mt-1 text-sm text-gray-900">{selectedSubmission.availability}</p>
                     </div>
                     
-                    {/* File Downloads */}
                     {(admin?.permissions?.downloadFiles || admin?.role === 'super_admin') && (
                       <div className="border-t pt-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Files</label>
                         <div className="space-y-2">
                           {selectedSubmission.cvFile && (
                             <button
-                              onClick={() => handleDownload(selectedSubmission._id, 'cv')}
+                              onClick={() => handleDownload(selectedSubmission._id, 'cv', selectedSubmission.cvFile.filename)}
                               className="flex items-center space-x-2 text-blue-600 hover:text-blue-800"
                             >
                               <Download className="w-4 h-4" />
@@ -377,7 +504,7 @@ const SubmissionsView = ({ admin, token }) => {
                           )}
                           {selectedSubmission.coverLetterFile && (
                             <button
-                              onClick={() => handleDownload(selectedSubmission._id, 'coverLetter')}
+                              onClick={() => handleDownload(selectedSubmission._id, 'coverLetter', selectedSubmission.coverLetterFile.filename)}
                               className="flex items-center space-x-2 text-blue-600 hover:text-blue-800"
                             >
                               <Download className="w-4 h-4" />
@@ -418,6 +545,40 @@ const SubmissionsView = ({ admin, token }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Email Modals */}
+      {showEmailModal && selectedSubmission && (
+        <EmailModal
+          submission={selectedSubmission}
+          isOpen={showEmailModal}
+          onClose={() => {
+            setShowEmailModal(false);
+            setSelectedSubmission(null);
+          }}
+          onSendEmail={handleSendEmail}
+          admin={admin}
+        />
+      )}
+
+      {showBulkEmailModal && (
+        <BulkEmailModal
+          selectedSubmissions={selectedForBulk}
+          isOpen={showBulkEmailModal}
+          onClose={() => setShowBulkEmailModal(false)}
+          onSendBulkEmail={handleSendBulkEmail}
+        />
+      )}
+
+      {showEmailHistory && (
+        <EmailHistory
+          history={emailHistoryData}
+          isOpen={showEmailHistory}
+          onClose={() => {
+            setShowEmailHistory(false);
+            setEmailHistoryData([]);
+          }}
+        />
       )}
     </div>
   );
