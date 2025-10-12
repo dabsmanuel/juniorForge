@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Download, Trash2, Eye, Building, User, Calendar, FileText, Mail, Clock, CheckSquare, RefreshCw } from 'lucide-react';
+import { Search, Filter, Download, Trash2, Eye, Building, User, Calendar, FileText, Mail, Clock, CheckSquare, RefreshCw, CheckCircle, X } from 'lucide-react';
 import { submissionsApi, emailApi, formatDate } from '../../lib/util';
 import { EmailModal, BulkEmailModal, EmailHistory } from './email/Email';
 
@@ -7,6 +7,7 @@ const SubmissionsView = ({ admin, token }) => {
   const [submissions, setSubmissions] = useState([]);
   const [filteredSubmissions, setFilteredSubmissions] = useState([]);
   const [filterType, setFilterType] = useState('all');
+  const [vettingFilter, setVettingFilter] = useState('all'); // 'all', 'vetted', 'unvetted'
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -22,13 +23,27 @@ const SubmissionsView = ({ admin, token }) => {
   const [selectedForBulk, setSelectedForBulk] = useState([]);
   const [selectMode, setSelectMode] = useState(false);
 
+  // Vetting states
+  const [showVettingModal, setShowVettingModal] = useState(false);
+  const [vettingSubmission, setVettingSubmission] = useState(null);
+  const [vettingForm, setVettingForm] = useState({
+    vettingNotes: '',
+    assessmentScores: {
+      technicalSkills: 5,
+      communication: 5,
+      problemSolving: 5,
+      culturalFit: 5,
+      motivation: 5
+    }
+  });
+
   useEffect(() => {
     loadSubmissions();
   }, []);
 
   useEffect(() => {
     filterSubmissions();
-  }, [submissions, filterType, searchTerm]);
+  }, [submissions, filterType, searchTerm, vettingFilter]);
 
   const loadSubmissions = async () => {
     setLoading(true);
@@ -65,6 +80,14 @@ const SubmissionsView = ({ admin, token }) => {
       filtered = filtered.filter(submission => submission.type === filterType);
     }
 
+    if (vettingFilter !== 'all') {
+      if (vettingFilter === 'vetted') {
+        filtered = filtered.filter(submission => submission.vetted === true);
+      } else if (vettingFilter === 'unvetted') {
+        filtered = filtered.filter(submission => !submission.vetted);
+      }
+    }
+
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       filtered = filtered.filter(submission =>
@@ -75,6 +98,53 @@ const SubmissionsView = ({ admin, token }) => {
     }
 
     setFilteredSubmissions(filtered);
+  };
+
+  const handleVetSubmission = async () => {
+    try {
+      await submissionsApi.vetSubmission(token, vettingSubmission._id, vettingForm);
+      alert('Submission vetted successfully!');
+      setShowVettingModal(false);
+      resetVettingForm();
+      await loadSubmissions();
+    } catch (error) {
+      alert(`Failed to vet submission: ${error.message}`);
+      console.error('Error vetting submission:', error);
+    }
+  };
+
+  const handleConvertToTalent = async (submissionId) => {
+    if (!window.confirm('Are you sure you want to convert this vetted submission to the main talent database?')) {
+      return;
+    }
+
+    try {
+      await submissionsApi.convertToTalent(token, submissionId);
+      alert('Submission converted to talent successfully!');
+      await loadSubmissions();
+    } catch (error) {
+      alert(`Failed to convert to talent: ${error.message}`);
+      console.error('Error converting to talent:', error);
+    }
+  };
+
+  const startVetting = (submission) => {
+    setVettingSubmission(submission);
+    setShowVettingModal(true);
+  };
+
+  const resetVettingForm = () => {
+    setVettingForm({
+      vettingNotes: '',
+      assessmentScores: {
+        technicalSkills: 5,
+        communication: 5,
+        problemSolving: 5,
+        culturalFit: 5,
+        motivation: 5
+      }
+    });
+    setVettingSubmission(null);
   };
 
   const handleDelete = async (submissionId) => {
@@ -116,7 +186,6 @@ const SubmissionsView = ({ admin, token }) => {
         message: emailData.message
       });
       
-      // Reload submissions to get updated email history
       await loadSubmissions();
       alert('Email sent successfully!');
     } catch (error) {
@@ -132,7 +201,6 @@ const SubmissionsView = ({ admin, token }) => {
         message: bulkData.message
       });
       
-      // Clear selection and reload
       setSelectedForBulk([]);
       setSelectMode(false);
       await loadSubmissions();
@@ -194,7 +262,6 @@ const SubmissionsView = ({ admin, token }) => {
         
         {/* Action Controls */}
         <div className="flex items-center space-x-3">
-          {/* Refresh Button */}
           <button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -205,7 +272,6 @@ const SubmissionsView = ({ admin, token }) => {
             <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
           </button>
           
-          {/* Bulk Email Controls */}
           {selectMode ? (
             <>
               <button
@@ -269,6 +335,16 @@ const SubmissionsView = ({ admin, token }) => {
               <option value="startup">Startups</option>
               <option value="talent">Talent</option>
             </select>
+
+            <select
+              value={vettingFilter}
+              onChange={(e) => setVettingFilter(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#685EFC] focus:border-transparent"
+            >
+              <option value="all">All Status</option>
+              <option value="vetted">Vetted</option>
+              <option value="unvetted">Unvetted</option>
+            </select>
           </div>
         </div>
 
@@ -276,6 +352,8 @@ const SubmissionsView = ({ admin, token }) => {
           <div>Total: {filteredSubmissions.length}</div>
           <div>Startups: {filteredSubmissions.filter(s => s.type === 'startup').length}</div>
           <div>Talent: {filteredSubmissions.filter(s => s.type === 'talent').length}</div>
+          <div>Vetted: {filteredSubmissions.filter(s => s.vetted).length}</div>
+          <div>Unvetted: {filteredSubmissions.filter(s => !s.vetted).length}</div>
         </div>
       </div>
 
@@ -295,6 +373,9 @@ const SubmissionsView = ({ admin, token }) => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Details
@@ -332,8 +413,11 @@ const SubmissionsView = ({ admin, token }) => {
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 flex items-center">
                           {submission.fullName}
+                          {submission.vetted && (
+                            <CheckCircle className="w-4 h-4 ml-2 text-green-600" />
+                          )}
                         </div>
                         <div className="text-sm text-gray-500">
                           {submission.email}
@@ -348,6 +432,15 @@ const SubmissionsView = ({ admin, token }) => {
                         : 'bg-purple-100 text-purple-800'
                     }`}>
                       {submission.type.charAt(0).toUpperCase() + submission.type.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      submission.vetted 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {submission.vetted ? 'Vetted' : 'Pending'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -378,6 +471,16 @@ const SubmissionsView = ({ admin, token }) => {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
+                      
+                      {submission.type === 'talent' && !submission.vetted && (
+                        <button
+                          onClick={() => startVetting(submission)}
+                          className="text-green-600 hover:text-green-900"
+                          title="Vet Submission"
+                        >
+                          <CheckSquare className="w-4 h-4" />
+                        </button>
+                      )}
                       
                       <button
                         onClick={() => {
@@ -435,7 +538,7 @@ const SubmissionsView = ({ admin, token }) => {
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No submissions found</h3>
             <p className="text-gray-500">
-              {searchTerm || filterType !== 'all' 
+              {searchTerm || filterType !== 'all' || vettingFilter !== 'all'
                 ? 'Try adjusting your filters or search terms' 
                 : 'Submissions will appear here once users start submitting forms'}
             </p>
@@ -443,7 +546,150 @@ const SubmissionsView = ({ admin, token }) => {
         )}
       </div>
 
-      {/* Modals */}
+      {/* Vetting Modal */}
+      {showVettingModal && vettingSubmission && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Vet Talent: {vettingSubmission.fullName}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowVettingModal(false);
+                    resetVettingForm();
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Vetting Notes
+                  </label>
+                  <textarea
+                    value={vettingForm.vettingNotes}
+                    onChange={(e) => setVettingForm({...vettingForm, vettingNotes: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#685EFC] focus:border-transparent min-h-[100px]"
+                    placeholder="Add notes about the vetting process..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Technical Skills (1-10)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={vettingForm.assessmentScores.technicalSkills}
+                      onChange={(e) => setVettingForm({
+                        ...vettingForm,
+                        assessmentScores: {...vettingForm.assessmentScores, technicalSkills: parseInt(e.target.value) || 0}
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#685EFC] focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Communication (1-10)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={vettingForm.assessmentScores.communication}
+                      onChange={(e) => setVettingForm({
+                        ...vettingForm,
+                        assessmentScores: {...vettingForm.assessmentScores, communication: parseInt(e.target.value) || 0}
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#685EFC] focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Problem Solving (1-10)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={vettingForm.assessmentScores.problemSolving}
+                      onChange={(e) => setVettingForm({
+                        ...vettingForm,
+                        assessmentScores: {...vettingForm.assessmentScores, problemSolving: parseInt(e.target.value) || 0}
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#685EFC] focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cultural Fit (1-10)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={vettingForm.assessmentScores.culturalFit}
+                      onChange={(e) => setVettingForm({
+                        ...vettingForm,
+                        assessmentScores: {...vettingForm.assessmentScores, culturalFit: parseInt(e.target.value) || 0}
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#685EFC] focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Motivation (1-10)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={vettingForm.assessmentScores.motivation}
+                      onChange={(e) => setVettingForm({
+                        ...vettingForm,
+                        assessmentScores: {...vettingForm.assessmentScores, motivation: parseInt(e.target.value) || 0}
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#685EFC] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-6">
+                  <button
+                    onClick={handleVetSubmission}
+                    className="flex-1 py-3 bg-[#685EFC] text-white rounded-lg font-semibold hover:bg-[#5548d4] transition-all"
+                  >
+                    Submit Vetting
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowVettingModal(false);
+                      resetVettingForm();
+                    }}
+                    className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Detail Modal */}
       {showModal && selectedSubmission && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
@@ -456,9 +702,7 @@ const SubmissionsView = ({ admin, token }) => {
                   onClick={closeModal}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="w-6 h-6" />
                 </button>
               </div>
 
@@ -473,6 +717,28 @@ const SubmissionsView = ({ admin, token }) => {
                     <p className="mt-1 text-sm text-gray-900">{selectedSubmission.email}</p>
                   </div>
                 </div>
+
+                {selectedSubmission.vetted && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center mb-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+                      <h3 className="font-semibold text-green-800">Vetted Submission</h3>
+                    </div>
+                    {selectedSubmission.vettingNotes && (
+                      <p className="text-sm text-gray-700 mb-2">{selectedSubmission.vettingNotes}</p>
+                    )}
+                    {selectedSubmission.assessmentScores && (
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>Technical: {selectedSubmission.assessmentScores.technicalSkills}/10</div>
+                        <div>Communication: {selectedSubmission.assessmentScores.communication}/10</div>
+                        <div>Problem Solving: {selectedSubmission.assessmentScores.problemSolving}/10</div>
+                        <div>Cultural Fit: {selectedSubmission.assessmentScores.culturalFit}/10</div>
+                        <div>Motivation: {selectedSubmission.assessmentScores.motivation}/10</div>
+                        <div className="font-semibold">Overall: {selectedSubmission.assessmentScores.overall}/10</div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {selectedSubmission.type === 'startup' ? (
                   <>
@@ -551,12 +817,39 @@ const SubmissionsView = ({ admin, token }) => {
               </div>
 
               <div className="flex justify-end space-x-3 mt-6">
+                {selectedSubmission.type === 'talent' && !selectedSubmission.vetted && (
+                  <button
+                    onClick={() => {
+                      closeModal();
+                      startVetting(selectedSubmission);
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 flex items-center space-x-2"
+                  >
+                    <CheckSquare className="w-4 h-4" />
+                    <span>Vet Submission</span>
+                  </button>
+                )}
+                
+                {selectedSubmission.type === 'talent' && selectedSubmission.vetted && (
+                  <button
+                    onClick={() => {
+                      closeModal();
+                      handleConvertToTalent(selectedSubmission._id);
+                    }}
+                    className="px-4 py-2 bg-[#685EFC] text-white rounded-md text-sm font-medium hover:bg-[#5548d4] flex items-center space-x-2"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Convert to Talent</span>
+                  </button>
+                )}
+
                 <button
                   onClick={closeModal}
                   className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
                 >
                   Close
                 </button>
+                
                 {(admin?.permissions?.deleteSubmissions || admin?.role === 'super_admin') && (
                   <button
                     onClick={() => {
