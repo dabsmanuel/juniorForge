@@ -12,6 +12,8 @@ import AdminStats from '../AdminStats';
 import TalentManagement from '../TalentManagement';
 import BootcampManagement from '../BootcampManagement';
 import VettedTalentsView from '../VettedTalents';
+import AccountingDashboard from '../Accounting';
+import AccountingPage from '../accounting/AccountingPage';
 import { useApi } from '../../../hooks/useApi';
 import { authApi, submissionsApi, talentApi, bootcampApi } from '../../../lib/util';
 
@@ -72,6 +74,8 @@ const SuperAdminLayout = ({ admin, token, onLogout }) => {
         return <AdminStats admin={admin} token={token} />;
       case 'vetted-talents':
         return <VettedTalentsView admin={admin} token={token} />;
+      case 'account':
+        return <AccountingDashboard admin={admin} token={token} />;
       default:
         return <SuperAdminDashboard data={dashboardData} loading={loading} />;
     }

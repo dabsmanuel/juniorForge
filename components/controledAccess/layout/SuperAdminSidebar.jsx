@@ -15,7 +15,8 @@ import {
   X,
   GraduationCap,
   VectorSquare,
-  VerifiedIcon
+  VerifiedIcon,
+  Banknote
 } from 'lucide-react';
 
 const SuperAdminSidebar = ({ 
@@ -80,6 +81,13 @@ const SuperAdminSidebar = ({
       id: 'vetted-talents',
       label: 'Vetted Talents',
       icon: VerifiedIcon,
+      permission: null
+    },
+
+    {
+      id: 'account',
+      label: 'Account',
+      icon: Banknote,
       permission: null
     }
   ];
