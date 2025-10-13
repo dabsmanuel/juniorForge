@@ -9,7 +9,7 @@ import Link from "next/link";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
-  if (pathname === '/auth' || pathname.startsWith('/auth/')) {
+  if (pathname === '/auth' || pathname.startsWith('/auth/') || pathname === '/account' || pathname.startsWith('/dashboard/')) {
     return null;
   }
 
