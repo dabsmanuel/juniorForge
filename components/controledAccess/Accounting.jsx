@@ -55,6 +55,13 @@ const JuniorForgeAccounting = () => {
     }
   }, [activeTab, token]);
 
+  // Re-fetch exchange rates when currency changes
+  useEffect(() => {
+    if (token) {
+      fetchExchangeRates();
+    }
+  }, [currency, token]);
+
   const fetchData = async () => {
     if (!token) return;
 
@@ -80,23 +87,31 @@ const JuniorForgeAccounting = () => {
   };
 
   const fetchPlacements = async () => {
-    const data = await fetchPlacementsApi();
-    setPlacements(Array.isArray(data) ? data : (data?.placements || []));
+    const response = await fetchPlacementsApi();
+    // Extract data from response
+    const data = response?.data || response?.placements || response || [];
+    setPlacements(Array.isArray(data) ? data : []);
   };
 
   const fetchRevenues = async () => {
-    const data = await fetchRevenuesApi();
-    setRevenues(Array.isArray(data) ? data : (data?.revenues || []));
+    const response = await fetchRevenuesApi();
+    // Extract data from response
+    const data = response?.data || response?.revenues || response || [];
+    setRevenues(Array.isArray(data) ? data : []);
   };
 
   const fetchExpenses = async () => {
-    const data = await fetchExpensesApi();
-    setExpenses(Array.isArray(data) ? data : (data?.expenses || []));
+    const response = await fetchExpensesApi();
+    // Extract data from response
+    const data = response?.data || response?.expenses || response || [];
+    setExpenses(Array.isArray(data) ? data : []);
   };
 
   const fetchDashboardStats = async () => {
-    const data = await fetchDashboardStatsApi();
-    setDashboardStats(data || {});
+    const response = await fetchDashboardStatsApi();
+    // Extract data from response
+    const data = response?.data || response || {};
+    setDashboardStats(data);
   };
 
   const fetchExchangeRates = async () => {
@@ -113,23 +128,21 @@ const JuniorForgeAccounting = () => {
     }
   };
 
-  // Enhanced currency conversion helper
-  const convertAmount = (amount, fromCurrency = 'USD') => {
-    if (!amount || isNaN(amount)) return 0;
-    if (currency === fromCurrency) {
-      return amount;
-    }
-    
-    // Convert from source currency to USD first, then to target currency
-    const amountInUSD = amount / exchangeRates[fromCurrency];
-    const convertedAmount = amountInUSD * exchangeRates[currency];
-    
-    return convertedAmount;
+  // Convert amount from a given currency to USD
+  const toUSD = (amount, fromCurrency) => {
+    if (isNaN(amount) || amount === null || amount === undefined) return 0;
+    return amount / exchangeRates[fromCurrency];
   };
 
-  // Universal currency formatting function
-  const formatCurrency = (amount, fromCurrency = 'USD') => {
-    const converted = convertAmount(amount, fromCurrency);
+  // Convert amount from USD to the target currency
+  const fromUSD = (amount, toCurrency) => {
+    if (isNaN(amount) || amount === null || amount === undefined) return 0;
+    return amount * exchangeRates[toCurrency];
+  };
+
+  // Universal currency formatting function (assumes input amount is in USD)
+  const formatCurrency = (amountInUSD) => {
+    const converted = fromUSD(amountInUSD, currency);
     
     if (currency === 'NGN') {
       return `₦${converted.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -146,18 +159,11 @@ const JuniorForgeAccounting = () => {
     return '$';
   };
 
-  // Get currency code for display
-  const getCurrencyCode = () => {
-    return currency;
-  };
-
   const handleCurrencyChange = async (newCurrency) => {
     setCurrency(newCurrency);
-    // Refresh exchange rates when currency changes
-    await fetchExchangeRates();
   };
 
-  // Calculations - these now return raw numbers for the formatCurrency function to handle
+  // Calculations - these now return raw numbers in USD for the formatCurrency function to handle
   const calculateTotalRevenue = () => {
     if (dashboardStats?.totalRevenue !== undefined) return dashboardStats.totalRevenue;
     return revenues.filter(r => r.status === 'paid').reduce((sum, r) => sum + r.amount, 0);
@@ -218,19 +224,21 @@ const JuniorForgeAccounting = () => {
       clientName: formData.get('clientName'),
       role: formData.get('role'),
       startDate: formData.get('startDate'),
-      monthlyClientPayment: parseFloat(formData.get('monthlyClientPayment')),
-      talentSalary: parseFloat(formData.get('talentSalary')),
-      annualSalary: parseFloat(formData.get('annualSalary')),
+      monthlyClientPayment: toUSD(parseFloat(formData.get('monthlyClientPayment')), currency),
+      talentSalary: toUSD(parseFloat(formData.get('talentSalary')), currency),
+      annualSalary: toUSD(parseFloat(formData.get('annualSalary')), currency),
       feePercentage: parseFloat(formData.get('feePercentage')),
       retentionBonusPercent: parseFloat(formData.get('retentionBonusPercent')),
-      status: editingItem ? formData.get('status') : 'active',
-      monthsCompleted: editingItem ? parseInt(formData.get('monthsCompleted')) : 0,
+      status: formData.get('status') || 'active',
+      monthsCompleted: parseInt(formData.get('monthsCompleted')) || 0,
       retentionBonusEligible: formData.get('retentionBonusEligible') === 'on'
     };
 
     try {
+      clearError();
       if (editingItem) {
-        await updatePlacementApi(editingItem.id, placementData);
+        // Use _id for MongoDB
+        await updatePlacementApi(editingItem._id || editingItem.id, placementData);
       } else {
         await createPlacementApi(placementData);
       }
@@ -238,6 +246,7 @@ const JuniorForgeAccounting = () => {
       closeModal();
     } catch (error) {
       console.error('Error saving placement:', error);
+      // Error is already set by the hook
     }
   };
 
@@ -248,7 +257,7 @@ const JuniorForgeAccounting = () => {
     const formData = new FormData(e.target);
     const revenueData = {
       type: formData.get('type'),
-      amount: parseFloat(formData.get('amount')),
+      amount: toUSD(parseFloat(formData.get('amount')), currency),
       date: formData.get('date'),
       client: formData.get('client'),
       description: formData.get('description'),
@@ -262,8 +271,10 @@ const JuniorForgeAccounting = () => {
     );
 
     try {
+      clearError();
       if (editingItem) {
-        await updateRevenueApi(editingItem.id, revenueData);
+        // Use _id for MongoDB
+        await updateRevenueApi(editingItem._id || editingItem.id, revenueData);
       } else {
         await createRevenueApi(revenueData);
       }
@@ -271,6 +282,7 @@ const JuniorForgeAccounting = () => {
       closeModal();
     } catch (error) {
       console.error('Error saving revenue:', error);
+      // Error is already set by the hook
     }
   };
 
@@ -282,7 +294,7 @@ const JuniorForgeAccounting = () => {
     const expenseData = {
       category: formData.get('category'),
       description: formData.get('description'),
-      amount: parseFloat(formData.get('amount')),
+      amount: toUSD(parseFloat(formData.get('amount')), currency),
       date: formData.get('date'),
       paymentMethod: formData.get('paymentMethod'),
       vendor: formData.get('vendor') || undefined,
@@ -294,8 +306,10 @@ const JuniorForgeAccounting = () => {
     );
 
     try {
+      clearError();
       if (editingItem) {
-        await updateExpenseApi(editingItem.id, expenseData);
+        // Use _id for MongoDB
+        await updateExpenseApi(editingItem._id || editingItem.id, expenseData);
       } else {
         await createExpenseApi(expenseData);
       }
@@ -303,6 +317,7 @@ const JuniorForgeAccounting = () => {
       closeModal();
     } catch (error) {
       console.error('Error saving expense:', error);
+      // Error is already set by the hook
     }
   };
 
@@ -311,6 +326,7 @@ const JuniorForgeAccounting = () => {
     if (!token) return;
 
     try {
+      clearError();
       switch (type) {
         case 'placement':
           await deletePlacementApi(id);
@@ -327,6 +343,7 @@ const JuniorForgeAccounting = () => {
       }
     } catch (error) {
       console.error('Error deleting item:', error);
+      // Error is already set by the hook
     }
   };
 
@@ -412,7 +429,7 @@ const JuniorForgeAccounting = () => {
             ) : (
               <>
                 {[...revenues.slice(-3).reverse()].map(r => (
-                  <div key={r.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div key={r._id || r.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
                     <div>
                       <p className="text-sm font-medium">{r.type} - {r.client}</p>
                       <p className="text-xs text-gray-500">{r.date}</p>
@@ -439,7 +456,7 @@ const JuniorForgeAccounting = () => {
         </div>
       )}
       
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold">Placements</h2>
         <button 
           onClick={() => openModal('placement')}
@@ -467,8 +484,8 @@ const JuniorForgeAccounting = () => {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <table className="w-full min-w-[640px]">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Talent</th>
@@ -482,7 +499,7 @@ const JuniorForgeAccounting = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {placements.map(placement => (
-                <tr key={placement.id}>
+                <tr key={placement._id || placement.id}>
                   <td className="px-6 py-4 whitespace-nowrap">{placement.talentName}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{placement.clientName}</td>
                   <td className="px-6 py-4">{placement.role}</td>
@@ -508,7 +525,7 @@ const JuniorForgeAccounting = () => {
                       <Edit size={18} />
                     </button>
                     <button 
-                      onClick={() => handleDelete('placement', placement.id)}
+                      onClick={() => handleDelete('placement', placement._id || placement.id)}
                       className="text-red-600 hover:text-red-800"
                       disabled={loading}
                     >
@@ -533,7 +550,7 @@ const JuniorForgeAccounting = () => {
         </div>
       )}
       
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold">Revenue</h2>
         <button 
           onClick={() => openModal('revenue')}
@@ -561,8 +578,8 @@ const JuniorForgeAccounting = () => {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <table className="w-full min-w-[640px]">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
@@ -575,7 +592,7 @@ const JuniorForgeAccounting = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {revenues.map(revenue => (
-                <tr key={revenue.id}>
+                <tr key={revenue._id || revenue.id}>
                   <td className="px-6 py-4 whitespace-nowrap font-medium">{revenue.type}</td>
                   <td className="px-6 py-4">{revenue.client || revenue.description || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{revenue.date}</td>
@@ -600,7 +617,7 @@ const JuniorForgeAccounting = () => {
                       <Edit size={18} />
                     </button>
                     <button 
-                      onClick={() => handleDelete('revenue', revenue.id)}
+                      onClick={() => handleDelete('revenue', revenue._id || revenue.id)}
                       className="text-red-600 hover:text-red-800"
                       disabled={loading}
                     >
@@ -625,7 +642,7 @@ const JuniorForgeAccounting = () => {
         </div>
       )}
       
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-2xl font-bold">Expenses</h2>
         <button 
           onClick={() => openModal('expense')}
@@ -653,8 +670,8 @@ const JuniorForgeAccounting = () => {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full">
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <table className="w-full min-w-[640px]">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
@@ -666,7 +683,7 @@ const JuniorForgeAccounting = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {expenses.map(expense => (
-                <tr key={expense.id}>
+                <tr key={expense._id || expense.id}>
                   <td className="px-6 py-4 whitespace-nowrap font-medium">{expense.category}</td>
                   <td className="px-6 py-4">{expense.description}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{expense.date}</td>
@@ -682,7 +699,7 @@ const JuniorForgeAccounting = () => {
                       <Edit size={18} />
                     </button>
                     <button 
-                      onClick={() => handleDelete('expense', expense.id)}
+                      onClick={() => handleDelete('expense', expense._id || expense.id)}
                       className="text-red-600 hover:text-red-800"
                       disabled={loading}
                     >
@@ -704,7 +721,7 @@ const JuniorForgeAccounting = () => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold">
               {editingItem ? 'Edit' : 'Add'} {modalType.charAt(0).toUpperCase() + modalType.slice(1)}
@@ -714,9 +731,15 @@ const JuniorForgeAccounting = () => {
             </button>
           </div>
 
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+              {error}
+            </div>
+          )}
+
           {modalType === 'placement' && (
             <form onSubmit={handleAddPlacement} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Talent Name *</label>
                   <input 
@@ -750,7 +773,7 @@ const JuniorForgeAccounting = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
                   <input 
@@ -776,7 +799,7 @@ const JuniorForgeAccounting = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Monthly Client Payment ({getCurrencySymbol()}) *
@@ -786,7 +809,7 @@ const JuniorForgeAccounting = () => {
                     type="number" 
                     step="0.01"
                     required 
-                    defaultValue={editingItem?.monthlyClientPayment}
+                    defaultValue={editingItem ? fromUSD(editingItem.monthlyClientPayment, currency) : ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -799,7 +822,7 @@ const JuniorForgeAccounting = () => {
                     type="number" 
                     step="0.01"
                     required 
-                    defaultValue={editingItem?.talentSalary}
+                    defaultValue={editingItem ? fromUSD(editingItem.talentSalary, currency) : ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -812,13 +835,13 @@ const JuniorForgeAccounting = () => {
                     type="number" 
                     step="0.01"
                     required 
-                    defaultValue={editingItem?.annualSalary}
+                    defaultValue={editingItem ? fromUSD(editingItem.annualSalary, currency) : ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Fee Percentage (%) *</label>
                   <input 
@@ -867,7 +890,7 @@ const JuniorForgeAccounting = () => {
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button 
                   type="submit" 
                   disabled={loading}
@@ -889,7 +912,7 @@ const JuniorForgeAccounting = () => {
 
           {modalType === 'revenue' && (
             <form onSubmit={handleAddRevenue} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
                   <select 
@@ -922,7 +945,7 @@ const JuniorForgeAccounting = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Amount ({getCurrencySymbol()}) *
@@ -932,7 +955,7 @@ const JuniorForgeAccounting = () => {
                     type="number" 
                     step="0.01"
                     required 
-                    defaultValue={editingItem?.amount}
+                    defaultValue={editingItem ? fromUSD(editingItem.amount, currency) : ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
@@ -968,7 +991,7 @@ const JuniorForgeAccounting = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
                   <select 
@@ -998,7 +1021,7 @@ const JuniorForgeAccounting = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button 
                   type="submit" 
                   disabled={loading}
@@ -1020,7 +1043,7 @@ const JuniorForgeAccounting = () => {
 
           {modalType === 'expense' && (
             <form onSubmit={handleAddExpense} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
                   <select 
@@ -1082,12 +1105,12 @@ const JuniorForgeAccounting = () => {
                   type="number" 
                   step="0.01"
                   required 
-                  defaultValue={editingItem?.amount}
+                  defaultValue={editingItem ? fromUSD(editingItem.amount, currency) : ''}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method *</label>
                   <select 
@@ -1118,7 +1141,7 @@ const JuniorForgeAccounting = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button 
                   type="submit" 
                   disabled={loading}
@@ -1144,8 +1167,8 @@ const JuniorForgeAccounting = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center max-w-md w-full">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Authentication Required</h2>
           <p className="text-gray-600 mb-4">Please log in to access the accounting system.</p>
           <p className="text-sm text-gray-500 mb-4">
@@ -1158,20 +1181,20 @@ const JuniorForgeAccounting = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="bg-blue-600 text-white p-6 shadow-lg">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="bg-[#685EFC] text-white p-4 sm:p-6 shadow-lg">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold">JuniorForge Accounting System</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">JuniorForge Accounting System</h1>
             <p className="text-blue-100 mt-1">Manage placements, revenue, and expenses</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="bg-blue-700 px-4 py-2 rounded-lg">
-              <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="bg-[#16252D] px-3 sm:px-4 py-2 rounded-lg flex-1 sm:flex-none">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <label className="text-sm font-medium">Currency:</label>
                 <select 
                   value={currency}
                   onChange={(e) => handleCurrencyChange(e.target.value)}
-                  className="bg-blue-600 text-white border border-blue-500 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="bg-[#685EFC] text-white border border-blue-500 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto"
                 >
                   <option value="USD">USD ($)</option>
                   <option value="NGN">NGN (₦)</option>
@@ -1200,7 +1223,7 @@ const JuniorForgeAccounting = () => {
             <button 
               onClick={fetchData}
               disabled={loading}
-              className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-800 disabled:bg-blue-500"
+              className="bg-[#16252D] text-white p-2 rounded-lg hover:bg-blue-800 disabled:bg-blue-500"
               title="Refresh data"
             >
               <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
@@ -1210,13 +1233,13 @@ const JuniorForgeAccounting = () => {
       </div>
 
       <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-6">
-          <nav className="flex space-x-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <nav className="flex space-x-2 sm:space-x-8 overflow-x-auto">
             {['dashboard', 'placements', 'revenue', 'expenses'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-4 px-2 border-b-2 font-medium text-sm ${
+                className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
                   activeTab === tab
                     ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -1229,7 +1252,7 @@ const JuniorForgeAccounting = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6">
         {activeTab === 'dashboard' && <Dashboard />}
         {activeTab === 'placements' && <Placements />}
         {activeTab === 'revenue' && <Revenue />}
