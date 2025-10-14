@@ -1181,20 +1181,20 @@ const JuniorForgeAccounting = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="bg-blue-600 text-white p-4 sm:p-6 shadow-lg">
+      <div className="bg-[#685EFC] text-white p-4 sm:p-6 shadow-lg">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">JuniorForge Accounting System</h1>
             <p className="text-blue-100 mt-1">Manage placements, revenue, and expenses</p>
           </div>
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="bg-blue-700 px-3 sm:px-4 py-2 rounded-lg flex-1 sm:flex-none">
+            <div className="bg-[#16252D] px-3 sm:px-4 py-2 rounded-lg flex-1 sm:flex-none">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <label className="text-sm font-medium">Currency:</label>
                 <select 
                   value={currency}
                   onChange={(e) => handleCurrencyChange(e.target.value)}
-                  className="bg-blue-600 text-white border border-blue-500 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto"
+                  className="bg-[#685EFC] text-white border border-blue-500 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto"
                 >
                   <option value="USD">USD ($)</option>
                   <option value="NGN">NGN (₦)</option>
@@ -1223,7 +1223,7 @@ const JuniorForgeAccounting = () => {
             <button 
               onClick={fetchData}
               disabled={loading}
-              className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-800 disabled:bg-blue-500"
+              className="bg-[#16252D] text-white p-2 rounded-lg hover:bg-blue-800 disabled:bg-blue-500"
               title="Refresh data"
             >
               <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />

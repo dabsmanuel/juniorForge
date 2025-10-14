@@ -7,6 +7,7 @@ import {
   BarChart3, UserCheck, GraduationCap, User, Briefcase,
   DollarSign, Star, FileCheck, Clock, AlertCircle
 } from 'lucide-react';
+import {authApi} from '../../lib/util';
 
 const BootcampManagement = ({ token }) => {
   const {
