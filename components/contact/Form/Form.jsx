@@ -9,7 +9,6 @@ const Form = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState({ type: '', message: '' })
   
-  // Form states for controlled inputs
   const [startupForm, setStartupForm] = useState({
     fullName: '',
     companyName: '',
@@ -30,7 +29,7 @@ const Form = () => {
 
   const handleCvUpload = (e) => {
     const file = e.target.files[0]
-    if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
+    if (file && file.size > 10 * 1024 * 1024) {
       setSubmitMessage({ type: 'error', message: 'File size must be less than 10MB' })
       return
     }
@@ -40,7 +39,7 @@ const Form = () => {
 
   const handleCoverLetterUpload = (e) => {
     const file = e.target.files[0]
-    if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
+    if (file && file.size > 10 * 1024 * 1024) {
       setSubmitMessage({ type: 'error', message: 'File size must be less than 10MB' })
       return
     }
@@ -61,9 +60,22 @@ const Form = () => {
     setIsSubmitting(true)
     setSubmitMessage({ type: '', message: '' })
 
-    // Validation
-    if (!talentForm.fullName || !talentForm.email) {
+    if (!talentForm.fullName || !talentForm.email || !talentForm.linkedIn || 
+        !talentForm.preferredRole || !talentForm.availability) {
       setSubmitMessage({ type: 'error', message: 'Please fill in all required fields' })
+      setIsSubmitting(false)
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(talentForm.email)) {
+      setSubmitMessage({ type: 'error', message: 'Please enter a valid email address' })
+      setIsSubmitting(false)
+      return
+    }
+
+    if (!talentForm.linkedIn.startsWith('https://')) {
+      setSubmitMessage({ type: 'error', message: 'LinkedIn/Portfolio link must start with https://' })
       setIsSubmitting(false)
       return
     }
@@ -96,7 +108,6 @@ const Form = () => {
           type: 'success', 
           message: 'Application submitted successfully! Check your email for confirmation.' 
         })
-        // Reset form
         setTalentForm({
           fullName: '',
           email: '',
@@ -106,7 +117,6 @@ const Form = () => {
         })
         setCvFile(null)
         setCoverLetterFile(null)
-        // Reset file inputs
         const fileInputs = document.querySelectorAll('input[type="file"]')
         fileInputs.forEach(input => input.value = '')
       } else {
@@ -131,10 +141,23 @@ const Form = () => {
     setIsSubmitting(true)
     setSubmitMessage({ type: '', message: '' })
     
-    // Validation
     if (!startupForm.fullName || !startupForm.companyName || !startupForm.email || 
-        !startupForm.aboutStartup || !startupForm.roleDescription) {
+        !startupForm.website || !startupForm.aboutStartup || !startupForm.roleDescription || 
+        !startupForm.hiringTimeline) {
       setSubmitMessage({ type: 'error', message: 'Please fill in all required fields' })
+      setIsSubmitting(false)
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(startupForm.email)) {
+      setSubmitMessage({ type: 'error', message: 'Please enter a valid email address' })
+      setIsSubmitting(false)
+      return
+    }
+
+    if (!startupForm.website.startsWith('https://')) {
+      setSubmitMessage({ type: 'error', message: 'Website must start with https://' })
       setIsSubmitting(false)
       return
     }
@@ -155,7 +178,6 @@ const Form = () => {
           type: 'success', 
           message: 'Application submitted successfully! Check your email for confirmation.' 
         })
-        // Reset form
         setStartupForm({
           fullName: '',
           companyName: '',
@@ -182,7 +204,6 @@ const Form = () => {
     }
   }
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -256,7 +277,6 @@ const Form = () => {
       viewport={{ amount: 0.2 }}
     >
       <div className='lg:px-8 py-12 px-4'>
-        {/* Tab Navigation */}
         <motion.div 
           className='flex gap-4 mb-16 w-full bg-white rounded-full'
           variants={tabVariants}
@@ -299,7 +319,7 @@ const Form = () => {
                 animate="visible"
                 exit="exit"
               >
-                <form className='space-y-6' onSubmit={handleStartupSubmit}>
+                <div className='space-y-6'>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
@@ -334,9 +354,10 @@ const Form = () => {
                     <input
                       type='text'
                       className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
-                      placeholder='Website'
+                      placeholder='Website* (must start with https://)'
                       value={startupForm.website}
                       onChange={(e) => handleStartupInputChange('website', e.target.value)}
+                      required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
@@ -365,14 +386,15 @@ const Form = () => {
                     <input
                       type='text'
                       className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
-                      placeholder='Hiring timeline'
+                      placeholder='Hiring timeline*'
                       value={startupForm.hiringTimeline}
                       onChange={(e) => handleStartupInputChange('hiringTimeline', e.target.value)}
+                      required
                     />
                   </motion.div>
                   
                   <motion.button
-                    type="submit"
+                    onClick={handleStartupSubmit}
                     disabled={isSubmitting}
                     className={`w-full lg:w-fit py-3 px-10 rounded-full font-medium transition-all border border-[#c1eddd] ${
                       isSubmitting 
@@ -385,7 +407,7 @@ const Form = () => {
                   >
                     {isSubmitting ? 'Submitting...' : 'Find Talents'}
                   </motion.button>
-                </form>
+                </div>
               </motion.div>
             )}
 
@@ -397,7 +419,7 @@ const Form = () => {
                 animate="visible"
                 exit="exit"
               >
-                <form className='space-y-6' onSubmit={handleTalentSubmit}>
+                <div className='space-y-6'>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
@@ -422,31 +444,33 @@ const Form = () => {
                     <input
                       type='text'
                       className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
-                      placeholder='LinkedIn Profile/Portfolio Link'
+                      placeholder='LinkedIn/Portfolio* (must start with https://)'
                       value={talentForm.linkedIn}
                       onChange={(e) => handleTalentInputChange('linkedIn', e.target.value)}
+                      required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
                       className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
-                      placeholder='Preferred Role'
+                      placeholder='Preferred Role*'
                       value={talentForm.preferredRole}
                       onChange={(e) => handleTalentInputChange('preferredRole', e.target.value)}
+                      required
                     />
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
                       type='text'
                       className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
-                      placeholder='Availability'
+                      placeholder='Availability*'
                       value={talentForm.availability}
                       onChange={(e) => handleTalentInputChange('availability', e.target.value)}
+                      required
                     />
                   </motion.div>
                   
-                  {/* CV Upload */}
                   <motion.div variants={inputVariants}>
                     <label className='block text-white text-sm font-medium mb-2'>
                       Upload CV*
@@ -467,10 +491,9 @@ const Form = () => {
                     </div>
                   </motion.div>
 
-                  {/* Cover Letter Upload */}
                   <motion.div variants={inputVariants}>
                     <label className='block text-white text-sm font-medium mb-2'>
-                      Upload Cover Letter
+                      Upload Cover Letter (Optional)
                     </label>
                     <div className='relative'>
                       <input
@@ -488,7 +511,7 @@ const Form = () => {
                   </motion.div>
 
                   <motion.button
-                    type="submit"
+                    onClick={handleTalentSubmit}
                     disabled={isSubmitting}
                     className={`w-full lg:w-fit py-3 px-10 rounded-full font-medium transition-all border border-[#c1eddd] ${
                       isSubmitting 
@@ -501,14 +524,13 @@ const Form = () => {
                   >
                     {isSubmitting ? 'Submitting...' : 'Apply Now'}
                   </motion.button>
-                </form>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </div>
 
-      {/* Submission Modal */}
       <AnimatePresence>
         {submitMessage.message && (
           <motion.div
@@ -518,7 +540,7 @@ const Form = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className={`bg-white p-8 rounded-lg shadow-xl max-w-sm w-full ${
+              className={`bg-white p-8 rounded-lg shadow-xl max-w-sm w-full mx-4 ${
                 submitMessage.type === 'success' ? 'border-2 border-[#12895E]' : 'border-2 border-red-500'
               }`}
               initial={{ scale: 0.9, opacity: 0 }}
