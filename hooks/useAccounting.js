@@ -100,6 +100,81 @@ export const useAccounting = (token) => {
     }
   }, [token]);
 
+  const getPlacementById = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.getPlacementById(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const transitionPlacement = useCallback(async (id, body = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.transitionPlacement(token, id, body);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const terminatePlacement = useCallback(async (id, body = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.terminatePlacement(token, id, body);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const generatePlacementRevenues = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.generatePlacementRevenues(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const generateAllPlacementRevenues = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.generateAllPlacementRevenues(token);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
   // Revenues
   const getRevenues = useCallback(async (params = {}) => {
     setLoading(true);
@@ -151,6 +226,36 @@ export const useAccounting = (token) => {
     setError(null);
     try {
       const data = await accountingApi.deleteRevenue(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const getRevenueById = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.getRevenueById(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const approveRevenue = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.approveRevenue(token, id);
       return data;
     } catch (err) {
       const errorMessage = handleApiError(err);
@@ -222,6 +327,178 @@ export const useAccounting = (token) => {
     }
   }, [token]);
 
+  const getExpenseById = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.getExpenseById(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const approveExpense = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.approveExpense(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // Equity Grants
+  const getEquityGrants = useCallback(async (params = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.getEquityGrants(token, params);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const createEquityGrant = useCallback(async (equityData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.createEquityGrant(token, equityData);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const updateEquityGrant = useCallback(async (id, equityData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.updateEquityGrant(token, id, equityData);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const deleteEquityGrant = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.deleteEquityGrant(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const getEquityGrantById = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.getEquityGrantById(token, id);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const completeEquityMilestone = useCallback(async (id, body = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.completeEquityMilestone(token, id, body);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // Analytics
+  const getPlacementAnalytics = useCallback(async (params = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.getPlacementAnalytics(token, params);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // Reports
+  // In your useAccounting hook, update getReports function
+const getReports = useCallback(async (params = {}) => {
+  setLoading(true);
+  setError(null);
+  try {
+    console.log('Fetching reports with params:', params);
+    const data = await accountingApi.getReports(token, params);
+    console.log('Reports API response:', data);
+    return data;
+  } catch (err) {
+    console.error('Reports API error:', err);
+    const errorMessage = handleApiError(err);
+    setError(errorMessage);
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+}, [token]);
+
+  const exportReport = useCallback(async (params = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await accountingApi.exportReport(token, params);
+      return data;
+    } catch (err) {
+      const errorMessage = handleApiError(err);
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
   // Currency - FIXED
   const getExchangeRates = useCallback(async () => {
     setLoading(true);
@@ -280,16 +557,37 @@ export const useAccounting = (token) => {
     createPlacement,
     updatePlacement,
     deletePlacement,
+    getPlacementById,
+    transitionPlacement,
+    terminatePlacement,
+    generatePlacementRevenues,
+    generateAllPlacementRevenues,
     // Revenues
     getRevenues,
     createRevenue,
     updateRevenue,
     deleteRevenue,
+    getRevenueById,
+    approveRevenue,
     // Expenses
     getExpenses,
     createExpense,
     updateExpense,
     deleteExpense,
+    getExpenseById,
+    approveExpense,
+    // Equity Grants
+    getEquityGrants,
+    createEquityGrant,
+    updateEquityGrant,
+    deleteEquityGrant,
+    getEquityGrantById,
+    completeEquityMilestone,
+    // Analytics
+    getPlacementAnalytics,
+    // Reports
+    getReports,
+    exportReport,
     // Currency - FIXED
     getExchangeRates,
     getExchangeRate,
