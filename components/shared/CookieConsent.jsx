@@ -80,7 +80,7 @@ const AnalyticsConsent = () => {
             </p>
             <p className="text-sm text-gray-600 mt-2">
               We do not collect any personally identifiable information. Learn more in our{' '}
-              <a href="/privacy-policy" className="text-blue-600 hover:underline font-medium">
+              <a href="/privacy-policy" className="text-[#12895E]  hover:underline font-medium">
                 Privacy Policy
               </a>.
             </p>
@@ -95,7 +95,7 @@ const AnalyticsConsent = () => {
             </button>
             <button
               onClick={handleAccept}
-              className="flex-1 md:flex-none px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              className="flex-1 md:flex-none px-6 py-2.5 text-sm font-medium text-white bg-[#12895E]  rounded-lg hover:bg-[#0e7d54]  transition-colors shadow-sm"
             >
               Accept Analytics
             </button>
