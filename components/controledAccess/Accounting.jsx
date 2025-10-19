@@ -1288,7 +1288,7 @@ const Reports = () => {
     }
   };
 
-  const API_BASE = "http://juniorforge.onrender.com/api"; 
+  const API_BASE = "https://juniorforge.onrender.com/api"; 
   const handleExportReport = async () => {
   if (!generatedReport) {
     setError('Please generate a report first');
