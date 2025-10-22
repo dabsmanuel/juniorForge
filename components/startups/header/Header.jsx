@@ -56,28 +56,26 @@ const TalentHero = () => {
   }
 
   return (
-    <section className="relative h-[50vh] sm:h-[75vh] overflow-hidden bg-fixed">
+    <section className="relative h-[60vh] sm:h-[80vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup sm:bg-[url('/images/startuphero.png')] bg-[#12895E]"
         style={{
-          backgroundImage: `url('/images/startuphero.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center center'
         }}
       />
       {/* Gradient Overlay */}
-      <div 
+      {/* <div 
         className="absolute inset-0 z-10"
         style={{
-          // background: `linear-gradient(135deg, #37ffb7 0%, #c1eddd 100%)`,
           mixBlendMode: 'overlay',
           opacity: 0.7
         }}
-      />
+      /> */}
       
       {/* Additional dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/40 z-15" />
+      <div className="lg:absolute lg:inset-0 lg:bg-black/40 z-15" />
       
       {/* Content Container */}
       <div className="relative z-20 h-full flex items-center">
@@ -110,7 +108,7 @@ const TalentHero = () => {
             <motion.div variants={buttonVariants}>
               <Link 
                 href='/contact' 
-                className="inline-flex items-center px-8 sm:px-16 lg:px-32 py-3 sm:py-4 bg-[#12895E] hover:bg-[#0f7a4b] text-white font-semibold text-base sm:text-lg rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl border border-[#37ffb7]"
+                className="inline-flex items-center px-8 sm:px-16 lg:px-32 py-3 sm:py-4 lg:bg-[#12895E] bg-white lg:hover:bg-[#0f7a4b] hover:bg-gray-100 lg:text-white text-black font-semibold text-base sm:text-lg rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl border border-[#37ffb7]"
               >
                 <motion.span
                   whileHover={{ scale: 1.05 }}

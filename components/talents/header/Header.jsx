@@ -56,13 +56,10 @@ const Hero = () => {
   }
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-fixed">
+    <section className="relative h-[80vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup"
-        style={{
-          backgroundImage: `url('/images/talenthero.png')`
-        }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup sm:bg-[url('/images/talenthero.png')] bg-[#12895E]"
       />
       
       {/* Gradient Overlay */}
@@ -76,7 +73,7 @@ const Hero = () => {
       />
       
       {/* Additional dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/40 z-15" />
+      <div className="lg:absolute lg:inset-0 lg:bg-black/40 z-15" />
       
       {/* Content Container */}
       <div className="relative z-20 min-h-screen flex items-center">
@@ -108,7 +105,7 @@ const Hero = () => {
             <motion.div variants={buttonVariants}>
               <Link 
                 href='/contact' 
-                className="inline-flex items-center px-32 py-4 bg-[#12895E] hover:bg-[#0f7a4b] text-white font-semibold text-lg rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl border border-[#37ffb7]"
+                className="inline-flex items-center lg:px-32 px-16 lg:py-4 py-2 lg:bg-[#12895E] bg-white lg:hover:bg-[#0f7a4b] hover:bg-gray-200 lg:text-white text-black font-semibold text-lg rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl border border-[#37ffb7]"
               >
                 <motion.span
                   whileHover={{ scale: 1.05 }}
