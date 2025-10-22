@@ -44,26 +44,12 @@ const Hero = () => {
     <section className="relative h-[50vh] sm:h-[75vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-no-repeat z-0 startup"
+        className="absolute inset-0 bg-no-repeat z-0 startup sm:bg-[url('/images/contact.png')] bg-[#12895E]"
         style={{
-          backgroundImage: `url('/images/contact.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center center'
         }}
       />
-      
-      {/* Gradient Overlay */}
-      <div 
-        className="absolute inset-0 z-10"
-        style={{
-          background: `linear-gradient(135deg, #37ffb7 0%, #c1eddd 100%)`,
-          mixBlendMode: 'overlay',
-          opacity: 0.7
-        }}
-      />
-      
-      {/* Additional dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/20 z-15" />
       
       {/* Content Container */}
       <div className="relative z-20 h-full flex items-center">
