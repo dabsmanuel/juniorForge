@@ -7,7 +7,7 @@ const SubmissionsView = ({ admin, token }) => {
   const [submissions, setSubmissions] = useState([]);
   const [filteredSubmissions, setFilteredSubmissions] = useState([]);
   const [filterType, setFilterType] = useState('all');
-  const [vettingFilter, setVettingFilter] = useState('all'); // 'all', 'vetted', 'unvetted'
+  const [vettingFilter, setVettingFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -15,7 +15,6 @@ const SubmissionsView = ({ admin, token }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   
-  // Email states
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showBulkEmailModal, setShowBulkEmailModal] = useState(false);
   const [showEmailHistory, setShowEmailHistory] = useState(false);
@@ -23,7 +22,6 @@ const SubmissionsView = ({ admin, token }) => {
   const [selectedForBulk, setSelectedForBulk] = useState([]);
   const [selectMode, setSelectMode] = useState(false);
 
-  // Vetting states
   const [showVettingModal, setShowVettingModal] = useState(false);
   const [vettingSubmission, setVettingSubmission] = useState(null);
   const [vettingForm, setVettingForm] = useState({
@@ -50,6 +48,8 @@ const SubmissionsView = ({ admin, token }) => {
     setError(null);
     try {
       const response = await submissionsApi.getAllSubmissions(token);
+      console.log('API Response:', response);
+      console.log('Submissions data:', response.data);
       setSubmissions(response.data || []);
     } catch (error) {
       setError(error.message);
@@ -233,6 +233,15 @@ const SubmissionsView = ({ admin, token }) => {
   };
 
   const openModal = (submission) => {
+    console.log('=== MODAL DEBUG START ===');
+    console.log('Full submission object:', submission);
+    console.log('Phone value:', submission.phone, '| Type:', typeof submission.phone);
+    console.log('Gender value:', submission.gender, '| Type:', typeof submission.gender);
+    console.log('Email:', submission.email);
+    console.log('Full Name:', submission.fullName);
+    console.log('Submission Type:', submission.type);
+    console.log('All keys:', Object.keys(submission));
+    console.log('=== MODAL DEBUG END ===');
     setSelectedSubmission(submission);
     setShowModal(true);
   };
@@ -253,14 +262,12 @@ const SubmissionsView = ({ admin, token }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
           <p className="text-gray-600">Manage form submissions from startups and talent</p>
         </div>
         
-        {/* Action Controls */}
         <div className="flex items-center space-x-3">
           <button
             onClick={handleRefresh}
@@ -310,7 +317,6 @@ const SubmissionsView = ({ admin, token }) => {
         </div>
       )}
 
-      {/* Filters and Search */}
       <div className="bg-white p-4 rounded-lg shadow-sm border">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
@@ -357,7 +363,6 @@ const SubmissionsView = ({ admin, token }) => {
         </div>
       </div>
 
-      {/* Submissions Table */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -546,7 +551,6 @@ const SubmissionsView = ({ admin, token }) => {
         )}
       </div>
 
-      {/* Vetting Modal */}
       {showVettingModal && vettingSubmission && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
@@ -689,7 +693,6 @@ const SubmissionsView = ({ admin, token }) => {
         </div>
       )}
 
-      {/* Detail Modal */}
       {showModal && selectedSubmission && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
@@ -715,6 +718,22 @@ const SubmissionsView = ({ admin, token }) => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Email</label>
                     <p className="mt-1 text-sm text-gray-900">{selectedSubmission.email}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Phone</label>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {selectedSubmission.phone !== undefined && selectedSubmission.phone !== null 
+                        ? String(selectedSubmission.phone) 
+                        : 'Not provided'}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Gender</label>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {selectedSubmission.gender && selectedSubmission.gender.trim() !== '' 
+                        ? selectedSubmission.gender 
+                        : 'Not provided'}
+                    </p>
                   </div>
                 </div>
 
@@ -867,7 +886,6 @@ const SubmissionsView = ({ admin, token }) => {
         </div>
       )}
 
-      {/* Email Modals */}
       {showEmailModal && selectedSubmission && (
         <EmailModal
           submission={selectedSubmission}

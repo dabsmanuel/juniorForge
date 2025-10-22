@@ -13,7 +13,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
 
-  if (pathname === '/auth' || pathname.startsWith('/auth/') || pathname === '/account' || pathname.startsWith('/dashboard/')) {
+  if (pathname === '/auth' || pathname.startsWith('/auth/') || pathname === '/account' || pathname.startsWith('/dashboard/') || pathname.startsWith('/canvas')) {
     return null;
   }
   // Check if current page should have glassmorphic effect

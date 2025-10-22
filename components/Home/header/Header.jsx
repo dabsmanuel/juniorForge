@@ -2,8 +2,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { useState } from "react"
 
 const Header = () => {
+  const [partners] = useState([]);
+  const duplicatedPartners = [...partners, ...partners];
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -126,9 +130,8 @@ const Header = () => {
         </motion.div>
       </motion.div>
 
-      {/* Background Logo - positioned behind image container but in front of text section */}
       <motion.div 
-        className="absolute inset-x-0 top-[40%] h-[50%] pointer-events-none z-20"
+        className="absolute inset-x-0 top-[66%] h-[100px] -left-10 pointer-events-none z-20"
         initial={{ opacity: 0, scale: 0.5 }}
         whileInView={{ opacity: 0.9, scale: 1 }}
         transition={{ duration: 1, delay: 0.5 }}
@@ -137,9 +140,9 @@ const Header = () => {
         <Image
           src="/images/green.png" 
           alt="Background Logo"
-          width={500}
-          height={500}
-          className="w-full max-w-sm h-auto object-contain opacity-0 lg:opacity-90"
+          width={100}
+          height={100}
+          className="w-full max-w-[18rem] h-auto object-contain opacity-0 lg:opacity-90"
         />
       </motion.div>
 
@@ -160,6 +163,78 @@ const Header = () => {
         />
       </motion.div>
 
+      {/* Partners Section - Only shows if partners exist */}
+      {partners.length > 0 && (
+        <motion.section 
+          className="py-10 overflow-hidden relative z-20 bg-[#FAF8F8] my-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: false, amount: 0.3 }}
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div 
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: false }}
+            >
+              <h2 className="text-2xl font-medium text-gray-900 mb-3">
+                Our Partners
+              </h2>
+            </motion.div>
+
+            <div className="relative">
+              {/* Gradient overlays for smooth fade effect */}
+              <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-white to-transparent z-10"></div>
+              <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-white to-transparent z-10"></div>
+
+              {/* Marquee container */}
+              <div className="overflow-hidden">
+                <div className="flex animate-marquee">
+                  {duplicatedPartners.map((partner, index) => (
+                    <div
+                      key={`${partner.id}-${index}`}
+                      className="flex-shrink-0 mx-6 md:mx-8 flex items-center justify-center"
+                      style={{ width: '160px', height: '70px' }}
+                    >
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        className="max-w-full max-h-full object-contain grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <style jsx>{`
+            @keyframes marquee {
+              0% {
+                transform: translateX(0);
+              }
+              100% {
+                transform: translateX(-50%);
+              }
+            }
+
+            .animate-marquee {
+              animation: marquee 30s linear infinite;
+              width: fit-content;
+            }
+
+            @media (hover: hover) {
+              .animate-marquee:hover {
+                animation-play-state: paused;
+              }
+            }
+          `}</style>
+        </motion.section>
+      )}
+
       {/* Text section */}
       <motion.div 
         className='py-12 lg:px-0 px-6 relative z-10 max-w-6xl mx-auto'
@@ -168,9 +243,9 @@ const Header = () => {
         transition={{ duration: 0.8 }}
         viewport={{ once: false, amount: 0.2 }}
       >
-        <div className='flex md:flex-row flex-col-reverse justify-between gap-8'>
+        <div className='flex md:flex-row flex-col-reverse justify-between gap-4'>
           <motion.div 
-            className='w-full h-full'
+            className='w-[44%] h-full'
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -186,7 +261,7 @@ const Header = () => {
           </motion.div>
           
           <motion.div 
-            className='lg:w-auto w-full lg:pt-10 text-center lg:text-left relative'
+            className='lg:w-[48%] w-full lg:pt-10 text-center lg:text-left relative'
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -218,7 +293,7 @@ const Header = () => {
                 transition={{ duration: 0.6, delay: 0.6 }}
                 viewport={{ once: false }}
               >
-                JuniorForge connects early-stage startups with ready-to-grow junior talents. We exist to close the experience gap and create opportunity where it matters most.
+                JuniorForge believes talent is universal, but opportunity is not. We discover, develop, and deploy exceptional entry level talent from everywhere for startups going anywhere - championing diversity, gender equality, and creating economic mobility through rigorous vetting and human development pathway.
               </motion.p>
               
               <motion.div 

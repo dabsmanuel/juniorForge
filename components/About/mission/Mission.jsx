@@ -75,10 +75,10 @@ const Mission = () => {
               Our Mission:
             </motion.h2>
             <motion.p 
-              className='mt-4 text-lg text-gray-300 max-w-2xl mx-auto text-center'
+              className='mt-4 text-lg text-gray-300 max-w-[52rem] mx-auto text-center'
               variants={textVariants}
             >
-              To enable startups to build their MVPs affordably while providing junior talent with career-building opportunities at high-growth companies.
+              JuniorForge believes talent is universal, but opportunity is not. We discover, develop, and deploy exceptional entry level talent from everywhere for startups going anywhere - championing diversity, gender equality, and creating economic mobility through rigorous vetting and human development pathway.
             </motion.p>
           </div>
         </motion.div>
