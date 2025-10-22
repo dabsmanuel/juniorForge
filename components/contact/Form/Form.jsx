@@ -13,6 +13,7 @@ const Form = () => {
     fullName: '',
     companyName: '',
     email: '',
+    phone: '',
     website: '',
     aboutStartup: '',
     roleDescription: '',
@@ -22,6 +23,8 @@ const Form = () => {
   const [talentForm, setTalentForm] = useState({
     fullName: '',
     email: '',
+    phone: '',
+    gender: '',
     linkedIn: '',
     preferredRole: '',
     availability: ''
@@ -60,7 +63,8 @@ const Form = () => {
     setIsSubmitting(true)
     setSubmitMessage({ type: '', message: '' })
 
-    if (!talentForm.fullName || !talentForm.email || !talentForm.linkedIn || 
+    if (!talentForm.fullName || !talentForm.email || !talentForm.phone || 
+        !talentForm.gender || !talentForm.linkedIn || 
         !talentForm.preferredRole || !talentForm.availability) {
       setSubmitMessage({ type: 'error', message: 'Please fill in all required fields' })
       setIsSubmitting(false)
@@ -89,6 +93,8 @@ const Form = () => {
     const formData = new FormData()
     formData.append('fullName', talentForm.fullName)
     formData.append('email', talentForm.email)
+    formData.append('phone', talentForm.phone)
+    formData.append('gender', talentForm.gender)
     formData.append('linkedIn', talentForm.linkedIn)
     formData.append('preferredRole', talentForm.preferredRole)
     formData.append('availability', talentForm.availability)
@@ -111,6 +117,8 @@ const Form = () => {
         setTalentForm({
           fullName: '',
           email: '',
+          phone: '',
+          gender: '',
           linkedIn: '',
           preferredRole: '',
           availability: ''
@@ -142,8 +150,8 @@ const Form = () => {
     setSubmitMessage({ type: '', message: '' })
     
     if (!startupForm.fullName || !startupForm.companyName || !startupForm.email || 
-        !startupForm.website || !startupForm.aboutStartup || !startupForm.roleDescription || 
-        !startupForm.hiringTimeline) {
+        !startupForm.phone || !startupForm.website || !startupForm.aboutStartup || 
+        !startupForm.roleDescription || !startupForm.hiringTimeline) {
       setSubmitMessage({ type: 'error', message: 'Please fill in all required fields' })
       setIsSubmitting(false)
       return
@@ -182,6 +190,7 @@ const Form = () => {
           fullName: '',
           companyName: '',
           email: '',
+          phone: '',
           website: '',
           aboutStartup: '',
           roleDescription: '',
@@ -269,7 +278,8 @@ const Form = () => {
   }
   
   return (
-    <motion.section 
+    <div>
+      <motion.section 
       className='bg-[#16252D] max-w-5xl mx-auto lg:rounded-2xl lg:my-16 lg:px-0 px-4'
       variants={containerVariants}
       initial="hidden"
@@ -347,6 +357,16 @@ const Form = () => {
                       placeholder='Email address*'
                       value={startupForm.email}
                       onChange={(e) => handleStartupInputChange('email', e.target.value)}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div variants={inputVariants}>
+                    <input
+                      type='tel'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
+                      placeholder='Phone number*'
+                      value={startupForm.phone}
+                      onChange={(e) => handleStartupInputChange('phone', e.target.value)}
                       required
                     />
                   </motion.div>
@@ -439,6 +459,29 @@ const Form = () => {
                       onChange={(e) => handleTalentInputChange('email', e.target.value)}
                       required
                     />
+                  </motion.div>
+                  <motion.div variants={inputVariants}>
+                    <input
+                      type='tel'
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-[#12895E]'
+                      placeholder='Phone number*'
+                      value={talentForm.phone}
+                      onChange={(e) => handleTalentInputChange('phone', e.target.value)}
+                      required
+                    />
+                  </motion.div>
+                  <motion.div variants={inputVariants}>
+                    <select
+                      className='w-full px-4 py-3 bg-white border-2 border-[#c1eddd] rounded-lg text-black focus:outline-none focus:border-[#12895E]'
+                      value={talentForm.gender}
+                      onChange={(e) => handleTalentInputChange('gender', e.target.value)}
+                      required
+                    >
+                      <option value=''>Select Gender*</option>
+                      <option value='Male'>Male</option>
+                      <option value='Female'>Female</option>
+                      <option value='Other'>Other</option>
+                    </select>
                   </motion.div>
                   <motion.div variants={inputVariants}>
                     <input
@@ -568,6 +611,12 @@ const Form = () => {
         )}
       </AnimatePresence>
     </motion.section>
+        <div className='flex items-center gap-4 max-w-5xl mx-auto lg:py-0 py-8 lg:px-0 px-4'>
+          <div className='rounded-full bg-red-600 lg:h-5 h-3 lg:w-5 w-3'></div>
+          <p className="text-sm lg:text-base">Application is open to everyone and anyone with potential. Your journey starts here.</p>
+        </div>
+    </div>
+    
   )
 }
 
