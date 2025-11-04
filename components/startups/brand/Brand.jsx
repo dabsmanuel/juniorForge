@@ -86,7 +86,7 @@ const Brand = () => {
       </motion.div>
       
       <motion.div 
-        className='grid grid-cols-2 lg:grid-cols-4 lg:gap-6 gap-4'
+        className='grid grid-cols-1 lg:grid-cols-4 lg:gap-6 gap-4'
         variants={gridVariants}
       >
         {startups.map((startup, index) => {
@@ -99,14 +99,11 @@ const Brand = () => {
                 transition: { duration: 0.2 }
               }}
               whileTap={{ scale: 0.95 }}
+              className="bg-[#c1eddd] rounded-lg p-4"
             >
-              <Image
-                src={startup.photo}
-                alt={startup.alt}
-                width={500}
-                height={400}
-                className='rounded-4xl object-cover'
-              />
+              <h2 className="text-white bg-black text-lg rounded-full w-fit py-1 px-4 mb-2">{startup.id}</h2>
+              <h2 className='font-bold px-3 lg:text-[32px] text-2xl pb-6'>{startup.title}</h2>
+              <p className='px-3 lg:text-2xl pb-12'>{startup.text}</p>
             </motion.div>
           )
         })}

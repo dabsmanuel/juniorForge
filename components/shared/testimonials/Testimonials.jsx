@@ -138,10 +138,18 @@ const Testimonials = () => {
                     
                     {/* User Info */}
                     <div className='flex items-center justify-center gap-3 sm:gap-4 md:gap-3'>
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-11 md:h-11 rounded-full ${testimonial.avatar} border-2 border-[#1f1f1f] flex items-center justify-center flex-shrink-0`}>
-                        <span className='text-gray-600 font-medium text-sm sm:text-base md:text-sm'>
-                          {testimonial.name.charAt(0)}
-                        </span>
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-11 md:h-11 rounded-full ${!testimonial.image ? testimonial.avatar : ''} border-2 border-[#1f1f1f] flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+                        {testimonial.image ? (
+                          <img 
+                            src={testimonial.image} 
+                            alt={testimonial.name}
+                            className='w-full h-full object-cover'
+                          />
+                        ) : (
+                          <span className='text-gray-600 font-medium text-sm sm:text-base md:text-sm'>
+                            {testimonial.name.charAt(0)}
+                          </span>
+                        )}
                       </div>
                       <div className='text-left min-w-0 flex-1'>
                         <h4 className='font-semibold text-gray-900 text-sm sm:text-base md:text-sm break-words'>

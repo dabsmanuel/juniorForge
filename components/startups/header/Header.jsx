@@ -55,8 +55,33 @@ const TalentHero = () => {
     }
   }
 
+  const statsContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+        staggerChildren: 0.2,
+        delayChildren: 0.5
+      }
+    }
+  }
+
+  const statItemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  }
+
   return (
-    <section className="relative h-[60vh] sm:h-[80vh] overflow-hidden bg-fixed">
+    <section className="relative lg:h-screen h-[80vh] overflow-hidden bg-fixed">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 startup sm:bg-[url('/images/startuphero.png')] bg-[#12895E]"
@@ -65,21 +90,13 @@ const TalentHero = () => {
           backgroundPosition: 'center center'
         }}
       />
-      {/* Gradient Overlay */}
-      {/* <div 
-        className="absolute inset-0 z-10"
-        style={{
-          mixBlendMode: 'overlay',
-          opacity: 0.7
-        }}
-      /> */}
       
       {/* Additional dark overlay for text readability */}
       <div className="lg:absolute lg:inset-0 lg:bg-black/40 z-15" />
       
-      {/* Content Container */}
-      <div className="relative z-20 h-full flex items-center">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Content Container - Changed items-center to items-end */}
+      <div className="relative z-20 h-full flex items-center pb-0">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div 
             className="max-w-6xl lg:px-16 lg:text-start text-center tracking-tighter"
             variants={containerVariants}
@@ -89,19 +106,18 @@ const TalentHero = () => {
           >
             {/* Heading */}
             <motion.div 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white lg:mb-6 lg:mt-0 mt-8 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white lg:mb-4 mb-8 lg:mt-0 mt-6 leading-tight max-w-3xl"
               variants={headingVariants}
             >
-              <h2>Build Your</h2>
-              <h2>MVP With Ease</h2>
+              <h2>Hire Pre-Vetted Junior Talent at Less Cost.</h2>
             </motion.div>
             
             {/* Description */}
             <motion.p 
-              className="text-lg sm:text-xl lg:text-2xl text-white lg:mb-8 my-4 leading-tight font-medium"
+              className="text-lg sm:text-xl lg:text-2xl text-white mb-8 leading-tight font-medium max-w-2xl"
               variants={descriptionVariants}
             >
-              We connect high-potential talents with innovative startups ready to grow.
+              Get start-up ready Junior developers, designers, marketers who can contribute from day one.
             </motion.p>
             
             {/* CTA Button */}
@@ -115,9 +131,27 @@ const TalentHero = () => {
                   whileTap={{ scale: 0.95 }}
                   className="inline-block"
                 >
-                  Find Talents
+                  Request Talents
                 </motion.span>
               </Link>
+            </motion.div>
+
+            <motion.div
+              className='flex gap-6 items-center text-white mt-8'
+              variants={statsContainerVariants}
+            >
+              <motion.div variants={statItemVariants}>
+                <h2 className='lg:text-4xl text-2xl font-bold'>200+</h2>
+                <p className='lg:text-xl'>Vetted Talents</p>
+              </motion.div>
+              <motion.div variants={statItemVariants}>
+                <h2 className='lg:text-4xl text-2xl font-bold'>48Hrs</h2>
+                <p className='lg:text-xl'>Avg. Match Time</p>
+              </motion.div>
+              <motion.div variants={statItemVariants}>
+                <h2 className='lg:text-4xl text-2xl font-bold'>95%</h2>
+                <p className='lg:text-xl'>Success Rate</p>
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>

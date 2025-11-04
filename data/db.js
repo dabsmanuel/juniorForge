@@ -41,25 +41,20 @@ export const talents = [
 export const testimonials = [
     {
       id: 1,
-      name: "Kelly James",
-      role: "UI/UX Designer",
-      text: "We connect high-potential talent with innovative startups ready to grow.",
-      avatar: "bg-green-200"
+      name: "Precious Winner",
+      role: "Graphic Designer",
+      text: "I found an amazing placement opportunity through JuniorForge that launched my career. The process was smooth and they truly understood what I was looking for.",
+      avatar: "bg-green-200",
+      image: "/images/winner.jpg"
     },
     {
       id: 2,
-      name: "Sarah Wilson",
-      role: "Frontend Developer",
-      text: "The platform transformed how I connect with exciting startup opportunities. Amazing experience!",
-      avatar: "bg-blue-200"
+      name: "Gomsy Properties",
+      role: "Real Estate Company",
+      text: "JuniorForge connected us with a talented junior graphics designer who exceeded our expectations. We're saving costs while getting quality work. Highly recommend!",
+      avatar: "bg-blue-200",
+      image: '/images/gomsy.jpg'
     },
-    {
-      id: 3,
-      name: "Marcus Johnson",
-      role: "Product Manager",
-      text: "Found my dream role through this platform. The connection process was seamless and efficient.",
-      avatar: "bg-purple-200"
-    }
   ]
 
 export const whyWeAreDifferent = [
@@ -95,26 +90,26 @@ export const whyWeAreDifferent = [
 export const startups = [
   {
     id: 1,
-    photo: '/images/first.png',
-    alt: 'pix1'
+    title: 'Rigorous Vetting',
+    text: 'We screen for skill, mindset, and culture fit. Only the best make it through.'
   },
 
   {
     id: 2,
-    photo: '/images/second.png',
-    alt: 'pix2'
+    title: 'Continuous Growth',
+    text: 'We partner with top programs to keep our talents learning and improving.'
   },
 
   {
     id: 3,
-    photo: '/images/third.png',
-    alt: 'pix3'
+    title: 'Ongoing Support',
+    text: 'We stay involved post hire ensuring smooth onboarding and lasting success.'
   },
 
   {
     id: 4,
-    photo: '/images/fourth.png',
-    alt: 'pix4'
+    title: '90-Day Guarantee',
+    text: 'If a hire isn’t the right fit, we’ll replace them at no extra cost.'
   },
 ]
 
@@ -143,3 +138,41 @@ export const team = [
   // },
 ]
 
+
+export const faqs = [
+  {
+    id: 1,
+    question: "What roles can you help us with?",
+    answer: "We specialize in Junior tech and non-tech roles: Frontend/Backend Developers, UI/UX Designers, Product managers, Marketing Specialist, Customer Success Roles, etc.",
+    borderColor: "border-l-[#12895E]"
+  },
+  {
+    id: 2,
+    question: "How do you vet talents?",
+    answer: "A 3-step process:",
+    steps: [
+      "Skills assessment (coding tests, design challenge, etc.)",
+      "Portfolio/Project Review",
+      "Culture Fit: Screening focused on startup readiness and growth mindset."
+    ],
+    borderColor: "border-l-[#16252D]"
+  },
+  {
+    id: 3,
+    question: "What if the hire doesn't work out?",
+    answer: "If a hire leaves or isn't a fit, we assure a replacement at no extra cost.",
+    borderColor: "border-l-[#685EFC]"
+  },
+  {
+    id: 4,
+    question: "Are these Full time or Contract roles?",
+    answer: "Both! We primarily place full-time employees, but we can also connect you with contract-to-hire or freelance talent depending on your needs.",
+    borderColor: "border-l-[#16252D]"
+  },
+  {
+    id: 5,
+    question: "Do you only work with Nigeria hire?",
+    answer: "No! While our talent pool is primarily in Nigeria/Africa, we work with Startups globally. Many of our talents work remotely for U.S., European and Asian Startups.",
+    borderColor: "border-l-[#12895E]"
+  }
+]
