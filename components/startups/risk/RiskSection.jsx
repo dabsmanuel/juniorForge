@@ -62,7 +62,7 @@ const RiskSection = () => {
   }
 
   return (
-    <section className='lg:pt-0 relative z-20 lg:-top-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full'>
+    <section className='lg:pt-0 relative z-20 lg:-top-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-12'>
       <motion.div 
         className='grid lg:grid-cols-2 grid-cols-1 gap-6 mx-auto '
         variants={containerVariants}
