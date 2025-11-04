@@ -49,7 +49,7 @@ const Footer = () => {
           <a href="https://www.linkedin.com/company/junior-forge/posts/?feedView=all" className="hover:text-[#685EFC] transition-colors" aria-label="LinkedIn">
             <FaLinkedin className="w-8 h-8"/>
           </a>
-          <a href="https://www.instagram.com/juniorforge__/" className="hover:text-[#685EFC] transition-colors" aria-label="Instagram">
+          <a href="https://www.instagram.com/juniorforge_ltd?igsh=M3hmMmk3Z3UyMXE2&utm_source=qr" className="hover:text-[#685EFC] transition-colors" aria-label="Instagram">
             <FaInstagramSquare className="w-8 h-8"/>
           </a>
 
