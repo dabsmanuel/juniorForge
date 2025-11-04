@@ -62,7 +62,7 @@ const RiskSection = () => {
   }
 
   return (
-    <section className=' lg:pt-0 relative z-20 -top-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full'>
+    <section className='lg:pt-0 relative z-20 lg:-top-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full'>
       <motion.div 
         className='grid lg:grid-cols-2 grid-cols-1 gap-6 mx-auto '
         variants={containerVariants}
@@ -71,11 +71,11 @@ const RiskSection = () => {
         viewport={{ once: false, amount: 0.3 }}
       >
         <motion.div 
-          className=''
+          className='lg:mt-0 mt-12 px-0'
           variants={imageVariants}
         >
           <motion.div 
-            className='max-w-[31.25rem] h-12 bg-[#37ffb7] relative top-12'
+            className='max-w-[31.25rem] h-12 bg-[#37ffb7] relative top-12 lg:block hidden'
             variants={accentBarVariants}
           ></motion.div>
           <Image
