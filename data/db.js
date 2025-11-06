@@ -176,3 +176,25 @@ export const faqs = [
     borderColor: "border-l-[#12895E]"
   }
 ]
+
+export const talentstapge = [
+  {
+    id: 1,
+    photo: '/images/first.png',
+    alt: 'First Startup Logo'
+  },
+  {
+    id: 2,
+    photo: '/images/second.png',
+    alt: 'Second Startup Logo'
+  },
+  {    id: 3,
+    photo: '/images/third.png',
+    alt: 'Third Startup Logo'
+  },
+  {
+    id: 4,
+    photo: '/images/fourth.png',
+    alt: 'Fourth Startup Logo'
+  }
+]

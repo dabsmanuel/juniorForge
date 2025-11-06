@@ -1,5 +1,5 @@
 'use client'
-import { startups } from '@/data/db'
+import { talentstapge } from '@/data/db'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 
@@ -91,7 +91,7 @@ const Brand = () => {
         variants={gridVariants}
       >
         {
-          startups.map((startup) =>{
+          talentstapge.map((startup) =>{
             return (
               <motion.div 
                 key={startup.id}
@@ -107,7 +107,7 @@ const Brand = () => {
                   alt={startup.alt}
                   width={500}
                   height={400}
-                  className='rounded-4xl object-cover'
+                  className='rounded-[50px] object-cover border-2 border-black'
                 />
               </motion.div>
             ) 
