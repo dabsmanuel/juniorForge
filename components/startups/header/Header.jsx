@@ -109,7 +109,7 @@ const TalentHero = () => {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white lg:mb-4 mb-8 lg:mt-0 mt-6 leading-tight max-w-3xl"
               variants={headingVariants}
             >
-              <h2>Hire Pre-Vetted Junior Talent at Less Cost.</h2>
+              <h2>Hire Pre-Vetted Junior Tech Talents at Less Cost.</h2>
             </motion.div>
             
             {/* Description */}
@@ -117,7 +117,7 @@ const TalentHero = () => {
               className="text-lg sm:text-xl lg:text-2xl text-white mb-8 leading-tight font-medium max-w-2xl"
               variants={descriptionVariants}
             >
-              Get start-up ready Junior developers, designers, marketers who can contribute from day one.
+              Get start-up ready Junior Tech Talents who can contribute from day one.
             </motion.p>
             
             {/* CTA Button */}
