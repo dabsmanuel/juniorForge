@@ -127,7 +127,7 @@ const HowItWorks = () => {
           >
             <h3 className='text-white bg-black text-lg rounded-full w-fit py-2 px-5 mb-2'>2</h3>
             <h2 className='font-bold px-3 lg:text-[32px] text-2xl pb-6'>Meet Pre-Vetted Talent</h2>
-            <p className='px-3 lg:text-2xl pb-12'>Get matched and start interviews within 48 hours.</p>
+            <p className='px-3 lg:text-2xl pb-12'>Get matched and start interviews within 72 hours.</p>
           </motion.div>
 
           <motion.div 
