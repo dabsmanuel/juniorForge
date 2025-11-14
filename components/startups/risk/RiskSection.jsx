@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 const RiskSection = () => {
   // Animation variants for the container
@@ -105,8 +106,14 @@ const RiskSection = () => {
             className='max-w-2xl'
             variants={textVariants}
           >
-            <span className='font-bold'>JuniorForge </span>solves this by providing pre-vetted, affordable junior talent ready to interview within 48 hours, helping startups hire faster and smarter.
+            <span className='font-bold'>JuniorForge </span>solves this by providing pre-vetted, affordable junior talent ready to interview within 72 hours, helping startups hire faster and smarter.
           </motion.p>
+
+          <div className='mt-8 flex items-center'>
+            <Link href='/hiring-calculator' className='text-[#12895E] underline font-medium ml-4'>
+              Or try our Hiring Cost Calculator
+            </Link>
+          </div>
         </motion.div>
       </motion.div>
     </section>
