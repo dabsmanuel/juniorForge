@@ -536,35 +536,85 @@ const HiringCalculator = () => {
 
         {/* Bottom Section */}
         {showResults && (
-          <div className="mt-20 grid md:grid-cols-3 gap-12 max-w-6xl">
-            <div>
-              <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
-                <Clock className="w-6 h-6 text-white" />
+          <>
+            <div className="mt-20 grid md:grid-cols-3 gap-12 max-w-6xl">
+              <div>
+                <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
+                  <Clock className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">72-hour turnaround</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Skip weeks of sourcing and screening. Get qualified candidates ready for final interviews within three days.
+                </p>
               </div>
-              <h4 className="text-lg font-bold text-gray-900 mb-3">72-hour turnaround</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Skip weeks of sourcing and screening. Get qualified candidates ready for final interviews within three days.
-              </p>
-            </div>
-            <div>
-              <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
-                <Users className="w-6 h-6 text-white" />
+              <div>
+                <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">Rigorously pre-vetted</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Technical assessments, portfolio reviews, and culture fit screening completed before you meet them.
+                </p>
               </div>
-              <h4 className="text-lg font-bold text-gray-900 mb-3">Rigorously pre-vetted</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Technical assessments, portfolio reviews, and culture fit screening completed before you meet them.
-              </p>
-            </div>
-            <div>
-              <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
-                <DollarSign className="w-6 h-6 text-white" />
+              <div>
+                <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
+                  <DollarSign className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">Completely free</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  No placement fees, no agency costs, no hidden charges. You only pay the talent's salary.
+                </p>
               </div>
-              <h4 className="text-lg font-bold text-gray-900 mb-3">Completely free</h4>
-              <p className="text-gray-600 leading-relaxed">
-                No placement fees, no agency costs, no hidden charges. You only pay the talent's salary.
-              </p>
             </div>
-          </div>
+
+            {/* What the Calculator Doesn't Include */}
+            <div className="mt-20 bg-gray-50 p-8 lg:p-12">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                What the calculator doesn't include
+              </h3>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                The real value goes beyond the numbers. Here's what you also get with JuniorForge:
+              </p>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Quality of hire</h4>
+                    <p className="text-gray-600 leading-relaxed">
+                      Pre-vetted means better cultural and technical fit from day one
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Reduced stress</h4>
+                    <p className="text-gray-600 leading-relaxed">
+                      Hiring is draining; we handle the hard parts so you can focus on building
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Faster onboarding</h4>
+                    <p className="text-gray-600 leading-relaxed">
+                      Better matches mean quicker ramp-up time and earlier productivity
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Long-term retention</h4>
+                    <p className="text-gray-600 leading-relaxed">
+                      Good matches from the start means people stay longer and grow with your company
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
