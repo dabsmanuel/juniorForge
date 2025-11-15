@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Calculator, DollarSign, TrendingDown, Clock, Users, Code } from 'lucide-react';
+import { Calculator, DollarSign, TrendingDown, Clock, Users, Code, CheckCircle, ArrowRight } from 'lucide-react';
 
 // Currency data
 const currencies = {
@@ -162,7 +162,6 @@ const HiringCalculator = () => {
         setRatesLoading(false);
       } catch (error) {
         console.error('Error fetching exchange rates:', error);
-        // Fallback to hardcoded rates if API fails
         setExchangeRates({
           USD: 1,
           NGN: 1550,
@@ -179,10 +178,8 @@ const HiringCalculator = () => {
     fetchExchangeRates();
   }, []);
 
-  // Get current tech roles based on selected currency
   const getCurrentTechRoles = () => techRolesByCurrency[selectedCurrency];
 
-  // Update custom salary when currency or role changes
   const handleCurrencyChange = (currency) => {
     setSelectedCurrency(currency);
     const newRoles = techRolesByCurrency[currency];
@@ -197,20 +194,15 @@ const HiringCalculator = () => {
     setShowResults(false);
   };
 
-  // Traditional hiring costs (without JuniorForge)
   const traditionalTimeToHire = 45;
   const traditionalReplacementRisk = 0.20;
-
-  // JuniorForge advantages
-  const juniorForgeTimeToHire = 3; // 72 hours = 3 days
+  const juniorForgeTimeToHire = 3;
   const juniorForgeReplacementRisk = 0.05;
-  const juniorForgeCostReduction = 0.40; // 40% savings
+  const juniorForgeCostReduction = 0.40;
 
-  // Calculate costs in selected currency
   const avgSalary = customSalary;
-  const juniorForgeSalary = avgSalary * (1 - juniorForgeCostReduction); // 40% cheaper
+  const juniorForgeSalary = avgSalary * (1 - juniorForgeCostReduction);
 
-  // Base costs in USD, converted to local currency using API rates
   const getConvertedCost = (usdAmount) => {
     if (ratesLoading || !exchangeRates[selectedCurrency]) {
       return usdAmount;
@@ -224,7 +216,7 @@ const HiringCalculator = () => {
   const traditionalTotalCost = traditionalCostPerHire * numHires;
 
   const timeSavingsDays = (traditionalTimeToHire - juniorForgeTimeToHire) * numHires;
-  const dailyProductivityCost = juniorForgeSalary / 260; // Using JuniorForge salary for fair comparison
+  const dailyProductivityCost = juniorForgeSalary / 260;
   const timeSavingsValue = timeSavingsDays * dailyProductivityCost;
 
   const replacementCost = avgSalary * 0.5;
@@ -239,12 +231,9 @@ const HiringCalculator = () => {
   const hourlyRate = getConvertedCost(baseHourlyRate);
   const screeningTimeSavings = totalScreeningHours * hourlyRate;
 
-  // Salary savings over 6 months (first placement period)
-  const sixMonthSalarySavings = (avgSalary - juniorForgeSalary) * 0.5 * numHires; // 6 months = 0.5 year
-
+  const sixMonthSalarySavings = (avgSalary - juniorForgeSalary) * 0.5 * numHires;
   const totalSavings = traditionalTotalCost + timeSavingsValue + replacementSavings + screeningTimeSavings + sixMonthSalarySavings;
 
-  // Convert to USD for dual display
   const convertToUSD = (amount) => {
     if (ratesLoading || !exchangeRates[selectedCurrency]) {
       return amount;
@@ -278,14 +267,12 @@ const HiringCalculator = () => {
     );
   };
 
-  // Get salary range for slider based on currency
   const getSalaryRange = () => {
     const currentRoles = getCurrentTechRoles();
     const salaries = Object.values(currentRoles).map(role => role.salary);
     const minSalary = Math.min(...salaries);
     const maxSalary = Math.max(...salaries);
     
-    // Create wider range around min/max
     const rangeMin = Math.floor(minSalary * 0.6);
     const rangeMax = Math.ceil(maxSalary * 1.5);
     const rangeStep = Math.ceil((rangeMax - rangeMin) / 100);
@@ -300,232 +287,305 @@ const HiringCalculator = () => {
   const salaryRange = getSalaryRange();
 
   return (
-    <div className="bg-white py-16 px-4 mt-20">
+    <div className="bg-gradient-to-b from-gray-50 via-white to-gray-50 py-20 px-4 sm:px-6 lg:px-8 mt-16">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="max-w-3xl mb-16">
-          <div className="inline-block bg-[#685EFC] px-4 py-1.5 mb-6 rounded-2xl border border-[#c1eddd]">
-            <span className="text-sm font-semibold text-white">100% FREE SERVICE</span>
+        <div className="max-w-3xl mb-20">
+          <div className="inline-flex items-center gap-2 bg-white px-5 py-2.5 mb-8 rounded-full shadow-sm border border-gray-100">
+            <div className="w-2 h-2 bg-[#12895E] rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-gray-700">100% Free Service</span>
           </div>
-          <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Calculate your hiring savings
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-8 leading-[1.1] tracking-tight">
+            Calculate your<br />hiring savings
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed">
+          <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed font-light">
             See how much time and money you save with pre-vetted tech talent ready to interview in 72 hours.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-12">
+        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
           {/* Input Section */}
           <div className="lg:col-span-2">
-            <div className="mb-10">
-              <label className="block text-sm font-semibold text-gray-900 mb-4">
-                Select your currency
-              </label>
-              <select
-                value={selectedCurrency}
-                onChange={(e) => handleCurrencyChange(e.target.value)}
-                className="w-full bg-white border-2 border-gray-900 px-4 py-4 text-gray-900 font-medium focus:outline-none focus:border-[#685EFC] cursor-pointer text-base"
-              >
-                {Object.keys(currencies).map((code) => (
-                  <option key={code} value={code}>
-                    {currencies[code].symbol} {currencies[code].name} ({code})
-                  </option>
-                ))}
-              </select>
-              <p className="text-sm text-gray-500 mt-3 leading-relaxed">
-                Salaries adjusted for {currencies[selectedCurrency].country}
-              </p>
-            </div>
+            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-gray-100 space-y-8">
+              
+              {/* Currency Selector */}
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-4 tracking-wider uppercase">
+                  Select your currency
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedCurrency}
+                    onChange={(e) => handleCurrencyChange(e.target.value)}
+                    className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl px-5 py-4 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-[#685EFC] focus:bg-white focus:border-[#685EFC] cursor-pointer text-base appearance-none transition-all"
+                  >
+                    {Object.keys(currencies).map((code) => (
+                      <option key={code} value={code}>
+                        {currencies[code].symbol} {currencies[code].name} ({code})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+                  Salaries adjusted for {currencies[selectedCurrency].country}
+                </p>
+              </div>
 
-            <div className="mb-10">
-              <label className="block text-sm font-semibold text-gray-900 mb-4">
-                What role are you hiring for?
-              </label>
-              <select
-                value={selectedRole}
-                onChange={(e) => handleRoleChange(e.target.value)}
-                className="w-full bg-white border-2 border-gray-900 px-4 py-4 text-gray-900 font-medium focus:outline-none focus:border-[#685EFC] cursor-pointer text-base"
-              >
-                {Object.keys(getCurrentTechRoles()).map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </select>
-              <p className="text-sm text-gray-500 mt-3 leading-relaxed">
-                {getCurrentTechRoles()[selectedRole].description}
-              </p>
-            </div>
+              {/* Role Selector */}
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-4 tracking-wider uppercase">
+                  What role are you hiring for?
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => handleRoleChange(e.target.value)}
+                    className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl px-5 py-4 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-[#685EFC] focus:bg-white focus:border-[#685EFC] cursor-pointer text-base appearance-none transition-all"
+                  >
+                    {Object.keys(getCurrentTechRoles()).map((role) => (
+                      <option key={role} value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mt-3 leading-relaxed">
+                  {getCurrentTechRoles()[selectedRole].description}
+                </p>
+              </div>
 
-            <div className="mb-10">
-              <label className="block text-sm font-semibold text-gray-900 mb-4">
-                How many do you need?
-              </label>
-              <div className="flex items-center gap-6">
+              {/* Number of Hires */}
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-6 tracking-wider uppercase">
+                  How many do you need?
+                </label>
+                <div className="flex items-center gap-6">
+                  <div className="flex-1">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={numHires}
+                      onChange={(e) => {
+                        setNumHires(parseInt(e.target.value));
+                        setShowResults(false);
+                      }}
+                      className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
+                      style={{
+                        background: `linear-gradient(to right, #685EFC 0%, #685EFC ${(numHires - 1) * 11.11}%, #e5e7eb ${(numHires - 1) * 11.11}%, #e5e7eb 100%)`
+                      }}
+                    />
+                  </div>
+                  <div className="bg-gradient-to-br from-[#685EFC] to-[#5449d4] text-white rounded-2xl px-6 py-3 min-w-[90px] text-center shadow-lg">
+                    <span className="text-3xl font-bold">{numHires}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between mt-3 text-xs text-gray-400 font-medium px-1">
+                  <span>1 hire</span>
+                  <span>10 hires</span>
+                </div>
+              </div>
+
+              {/* Salary Input */}
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <label className="block text-xs font-bold text-gray-500 tracking-wider uppercase">
+                    Expected annual salary
+                  </label>
+                  <span className="text-xs text-[#685EFC] font-semibold bg-purple-50 px-3 py-1.5 rounded-full">
+                    Avg: {formatCurrency(getCurrentTechRoles()[selectedRole].salary)}
+                  </span>
+                </div>
+                <div className="mb-5">
+                  <div className="relative">
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400">
+                      {currencies[selectedCurrency].symbol}
+                    </span>
+                    <input
+                      type="number"
+                      value={customSalary}
+                      onChange={(e) => {
+                        setCustomSalary(parseInt(e.target.value) || 0);
+                        setShowResults(false);
+                      }}
+                      className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl pl-14 pr-5 py-5 text-3xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#685EFC] focus:bg-white focus:border-[#685EFC] transition-all"
+                    />
+                  </div>
+                </div>
                 <input
                   type="range"
-                  min="1"
-                  max="10"
-                  value={numHires}
-                  onChange={(e) => {
-                    setNumHires(parseInt(e.target.value));
-                    setShowResults(false);
-                  }}
-                  className="flex-1 h-1 bg-gray-200 appearance-none cursor-pointer accent-[#685EFC]"
-                  style={{
-                    background: `linear-gradient(to right, #685EFC 0%, #685EFC ${(numHires - 1) * 11.11}%, #e5e7eb ${(numHires - 1) * 11.11}%, #e5e7eb 100%)`
-                  }}
-                />
-                <span className="text-4xl font-bold text-gray-900 min-w-[60px] text-right">{numHires}</span>
-              </div>
-              <div className="flex justify-between mt-2 text-xs text-gray-400">
-                <span>1</span>
-                <span>10</span>
-              </div>
-            </div>
-
-            <div className="mb-12">
-              <div className="flex items-baseline justify-between mb-4">
-                <label className="block text-sm font-semibold text-gray-900">
-                  Expected annual salary
-                </label>
-                <span className="text-xs text-gray-500">
-                  Industry avg: {formatCurrency(getCurrentTechRoles()[selectedRole].salary)}
-                </span>
-              </div>
-              <div className="mb-4">
-                <input
-                  type="number"
+                  min={salaryRange.min}
+                  max={salaryRange.max}
+                  step={salaryRange.step}
                   value={customSalary}
                   onChange={(e) => {
-                    setCustomSalary(parseInt(e.target.value) || 0);
+                    setCustomSalary(parseInt(e.target.value));
                     setShowResults(false);
                   }}
-                  className="w-full bg-white border-2 border-gray-900 px-4 py-4 text-3xl font-bold text-gray-900 focus:outline-none focus:border-[#685EFC]"
+                  className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #685EFC 0%, #685EFC ${((customSalary - salaryRange.min) / (salaryRange.max - salaryRange.min)) * 100}%, #e5e7eb ${((customSalary - salaryRange.min) / (salaryRange.max - salaryRange.min)) * 100}%, #e5e7eb 100%)`
+                  }}
                 />
+                <div className="flex justify-between mt-3 text-xs text-gray-400 font-medium px-1">
+                  <span>{formatCurrency(salaryRange.min)}</span>
+                  <span>{formatCurrency(salaryRange.max)}</span>
+                </div>
               </div>
-              <input
-                type="range"
-                min={salaryRange.min}
-                max={salaryRange.max}
-                step={salaryRange.step}
-                value={customSalary}
-                onChange={(e) => {
-                  setCustomSalary(parseInt(e.target.value));
-                  setShowResults(false);
-                }}
-                className="w-full h-1 bg-gray-200 appearance-none cursor-pointer accent-[#685EFC]"
-                style={{
-                  background: `linear-gradient(to right, #685EFC 0%, #685EFC ${((customSalary - salaryRange.min) / (salaryRange.max - salaryRange.min)) * 100}%, #e5e7eb ${((customSalary - salaryRange.min) / (salaryRange.max - salaryRange.min)) * 100}%, #e5e7eb 100%)`
-                }}
-              />
-              <div className="flex justify-between mt-2 text-xs text-gray-400">
-                <span>{formatCurrency(salaryRange.min)}</span>
-                <span>{formatCurrency(salaryRange.max)}</span>
-              </div>
-            </div>
 
-            <button
-              onClick={handleCalculate}
-              className="w-full bg-[#12895E] hover:bg-[#0f7a4b] text-white font-semibold py-5 px-8 transition-colors duration-200 text-lg"
-            >
-              Calculate savings
-            </button>
+              {/* Calculate Button */}
+              <button
+                onClick={handleCalculate}
+                className="w-full bg-gradient-to-r from-[#12895E] to-[#0f7a4b] hover:from-[#0f7a4b] hover:to-[#0c6340] text-white font-bold py-5 px-8 rounded-2xl transition-all duration-300 text-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
+              >
+                Calculate savings
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
 
           {/* Results Section */}
-          <div className={`lg:col-span-3 transition-opacity duration-400 ${showResults ? 'opacity-100' : 'opacity-30'}`}>
+          <div className={`lg:col-span-3 transition-all duration-500 ${showResults ? 'opacity-100' : 'opacity-30'}`}>
             {showResults ? (
-              <div>
-                <div className="bg-[#685EFC] text-white p-8 mb-8">
-                  <p className="text-sm font-medium mb-3 opacity-90">Total savings with JuniorForge</p>
-                  <p className="text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+              <div className="space-y-8">
+                {/* Main Savings Card */}
+                <div className="bg-gradient-to-br from-[#685EFC] via-[#685EFC] to-[#5449d4] text-white rounded-3xl p-8 lg:p-10 shadow-2xl">
+                  <p className="text-sm font-semibold mb-3 opacity-90 uppercase tracking-wide">Total savings with JuniorForge</p>
+                  <p className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                     {formatDualCurrency(totalSavings)}
                   </p>
-                  <p className="text-lg opacity-90 mb-6">
+                  <p className="text-lg opacity-90 mb-8 font-light">
                     For hiring {numHires} {selectedRole}{numHires > 1 ? 's' : ''}
                   </p>
-                  <div className="border-t border-white/20 pt-6">
-                    <p className="text-sm font-medium mb-2 opacity-90">Your monthly cost per {selectedRole} with JuniorForge</p>
-                    <p className="text-3xl font-bold mb-1">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <p className="text-sm font-semibold mb-3 opacity-90 uppercase tracking-wide">Your monthly cost per {selectedRole}</p>
+                    <p className="text-4xl font-bold mb-2">
                       {formatDualCurrency(Math.round(juniorForgeSalary / 12))}
                     </p>
-                    <p className="text-sm opacity-75 mt-2">
+                    <p className="text-sm opacity-80 mt-3 font-light">
                       vs {formatDualCurrency(Math.round(customSalary / 12))} market rate — Save 40% on talent costs
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-6">
-                    Breakdown
+                {/* Breakdown Section */}
+                <div>
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6 px-2">
+                    Savings Breakdown
                   </h3>
                   
-                  <div className="border-l-4 border-[#37ffb7] pl-6 py-2">
-                    <p className="text-sm text-gray-500 mb-1">Lower salary costs (first 6 months)</p>
-                    <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                      {formatDualCurrency(sixMonthSalarySavings)}
-                    </p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Pay 40% below market rate for pre-vetted talent. That's {formatDualCurrency(Math.round(juniorForgeSalary / 12))} monthly vs {formatDualCurrency(Math.round(customSalary / 12))} market rate.
-                    </p>
-                  </div>
+                  <div className="space-y-5">
+                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <DollarSign className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 mb-2 font-medium">Lower salary costs (first 6 months)</p>
+                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                            {formatDualCurrency(sixMonthSalarySavings)}
+                          </p>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            Pay 40% below market rate for pre-vetted talent. That's {formatDualCurrency(Math.round(juniorForgeSalary / 12))}/month vs {formatDualCurrency(Math.round(customSalary / 12))} market rate.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="border-l-4 border-[#685EFC] pl-6 py-2">
-                    <p className="text-sm text-gray-500 mb-1">Time-to-hire savings</p>
-                    <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                      {formatDualCurrency(timeSavingsValue)}
-                    </p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Get candidates in 72 hours instead of waiting {traditionalTimeToHire} days. That's {timeSavingsDays} days of productivity you keep.
-                    </p>
-                  </div>
+                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#685EFC] to-[#5449d4] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <Clock className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 mb-2 font-medium">Time-to-hire savings</p>
+                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                            {formatDualCurrency(timeSavingsValue)}
+                          </p>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            Get candidates in 72 hours instead of waiting {traditionalTimeToHire} days. That's {timeSavingsDays} days of productivity you keep.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="border-l-4 border-[#37ffb7] pl-6 py-2">
-                    <p className="text-sm text-gray-500 mb-1">Team time saved</p>
-                    <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                      {formatDualCurrency(screeningTimeSavings)}
-                    </p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Your team saves {totalScreeningHours} hours. No resume screening, no initial calls—just final interviews with pre-vetted talent.
-                    </p>
-                  </div>
+                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <Users className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 mb-2 font-medium">Team time saved</p>
+                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                            {formatDualCurrency(screeningTimeSavings)}
+                          </p>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            Your team saves {totalScreeningHours} hours. No resume screening, no initial calls—just final interviews with pre-vetted talent.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="border-l-4 border-[#685EFC] pl-6 py-2">
-                    <p className="text-sm text-gray-500 mb-1">Reduced bad hire risk</p>
-                    <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                      {formatDualCurrency(replacementSavings)}
-                    </p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Our vetting process plus 90-day guarantee reduces replacement costs by 75%.
-                    </p>
-                  </div>
+                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#685EFC] to-[#5449d4] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <TrendingDown className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 mb-2 font-medium">Reduced bad hire risk</p>
+                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                            {formatDualCurrency(replacementSavings)}
+                          </p>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            Our vetting process plus 90-day guarantee reduces replacement costs by 75%.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="border-l-4 border-[#37ffb7] pl-6 py-2">
-                    <p className="text-sm text-gray-500 mb-1">Job boards & recruiting costs</p>
-                    <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                      {formatDualCurrency(traditionalTotalCost)}
-                    </p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      No job board fees, no agency placement fees. JuniorForge is completely free.
-                    </p>
+                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <Code className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-500 mb-2 font-medium">Job boards & recruiting costs</p>
+                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                            {formatDualCurrency(traditionalTotalCost)}
+                          </p>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            No job board fees, no agency placement fees. JuniorForge is completely free.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-12 bg-gray-50 p-6">
+                {/* Disclaimer */}
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    These calculations are based on industry averages for traditional hiring in {currencies[selectedCurrency].country}. Your actual savings may vary based on your specific situation, but the time and quality advantages remain consistent.
+                    <span className="font-semibold text-gray-900">Note:</span> These calculations are based on industry averages for traditional hiring in {currencies[selectedCurrency].country}. Your actual savings may vary based on your specific situation, but the time and quality advantages remain consistent.
                   </p>
                 </div>
               </div>
             ) : (
               <div className="h-full flex items-center justify-center p-12">
                 <div className="text-center max-w-md">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Calculator className="w-8 h-8 text-gray-400" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <Calculator className="w-10 h-10 text-gray-400" />
                   </div>
-                  <p className="text-lg text-gray-500 leading-relaxed">
+                  <p className="text-xl text-gray-400 leading-relaxed font-light">
                     Fill in your hiring details and click calculate to see your potential savings
                   </p>
                 </div>
@@ -534,79 +594,95 @@ const HiringCalculator = () => {
           </div>
         </div>
 
-        {/* Bottom Section */}
+        {/* Bottom Benefits Section */}
         {showResults && (
           <>
-            <div className="mt-20 grid md:grid-cols-3 gap-12 max-w-6xl">
-              <div>
-                <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
-                  <Clock className="w-6 h-6 text-white" />
+            <div className="mt-24 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="group">
+                <div className="w-14 h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <Clock className="w-7 h-7 text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">72-hour turnaround</h4>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">72-hour turnaround</h4>
                 <p className="text-gray-600 leading-relaxed">
                   Skip weeks of sourcing and screening. Get qualified candidates ready for final interviews within three days.
                 </p>
               </div>
-              <div>
-                <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
-                  <Users className="w-6 h-6 text-white" />
+              <div className="group">
+                <div className="w-14 h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <Users className="w-7 h-7 text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">Rigorously pre-vetted</h4>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Rigorously pre-vetted</h4>
                 <p className="text-gray-600 leading-relaxed">
                   Technical assessments, portfolio reviews, and culture fit screening completed before you meet them.
                 </p>
               </div>
-              <div>
-                <div className="w-12 h-12 bg-[#12895E] flex items-center justify-center mb-6">
-                  <DollarSign className="w-6 h-6 text-white" />
+              <div className="group">
+                <div className="w-14 h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <DollarSign className="w-7 h-7 text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">Completely free</h4>
+                <h4 className="text-xl font-bold text-gray-900 mb-4">Completely free</h4>
                 <p className="text-gray-600 leading-relaxed">
                   No placement fees, no agency costs, no hidden charges. You only pay the talent's salary.
                 </p>
               </div>
             </div>
 
-            {/* What the Calculator Doesn't Include */}
-            <div className="mt-20 bg-gray-50 p-8 lg:p-12">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            {/* Hidden Value Section */}
+            <div className="mt-24 bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100">
+              <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                 What the calculator doesn't include
               </h3>
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg text-gray-600 mb-10 leading-relaxed max-w-3xl">
                 The real value goes beyond the numbers. Here's what you also get with JuniorForge:
               </p>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Quality of hire</h4>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Quality of hire</h4>
                     <p className="text-gray-600 leading-relaxed">
                       Pre-vetted means better cultural and technical fit from day one
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                <div className="flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Reduced stress</h4>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Reduced stress</h4>
                     <p className="text-gray-600 leading-relaxed">
                       Hiring is draining; we handle the hard parts so you can focus on building
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                <div className="flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Faster onboarding</h4>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Faster onboarding</h4>
                     <p className="text-gray-600 leading-relaxed">
                       Better matches mean quicker ramp-up time and earlier productivity
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#37ffb7] rounded-full mt-1"></div>
+                <div className="flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Long-term retention</h4>
+                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Long-term retention</h4>
                     <p className="text-gray-600 leading-relaxed">
                       Good matches from the start means people stay longer and grow with your company
                     </p>
@@ -617,6 +693,40 @@ const HiringCalculator = () => {
           </>
         )}
       </div>
+
+      <style jsx>{`
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: #685EFC;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(104, 94, 252, 0.4);
+          transition: all 0.2s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(104, 94, 252, 0.5);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: #685EFC;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 8px rgba(104, 94, 252, 0.4);
+          transition: all 0.2s;
+        }
+        
+        input[type="range"]::-moz-range-thumb:hover {
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(104, 94, 252, 0.5);
+        }
+      `}</style>
     </div>
   );
 };
