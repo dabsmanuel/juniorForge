@@ -152,7 +152,6 @@ const HiringCalculator = () => {
   const [exchangeRates, setExchangeRates] = useState({});
   const [ratesLoading, setRatesLoading] = useState(true);
 
-  // Fetch exchange rates from API
   useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
@@ -459,20 +458,20 @@ const HiringCalculator = () => {
             {showResults ? (
               <div className="space-y-8">
                 {/* Main Savings Card */}
-                <div className="bg-gradient-to-br from-[#685EFC] via-[#685EFC] to-[#5449d4] text-white rounded-3xl p-8 lg:p-10 shadow-2xl">
-                  <p className="text-sm font-semibold mb-3 opacity-90 uppercase tracking-wide">Total savings with JuniorForge</p>
-                  <p className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                <div className="bg-gradient-to-br from-[#685EFC] via-[#685EFC] to-[#5449d4] text-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl">
+                  <p className="text-xs sm:text-sm font-semibold mb-3 opacity-90 uppercase tracking-wide">Total savings with JuniorForge</p>
+                  <p className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight break-words">
                     {formatDualCurrency(totalSavings)}
                   </p>
-                  <p className="text-lg opacity-90 mb-8 font-light">
+                  <p className="text-base sm:text-lg opacity-90 mb-6 sm:mb-8 font-light">
                     For hiring {numHires} {selectedRole}{numHires > 1 ? 's' : ''}
                   </p>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <p className="text-sm font-semibold mb-3 opacity-90 uppercase tracking-wide">Your monthly cost per {selectedRole}</p>
-                    <p className="text-4xl font-bold mb-2">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
+                    <p className="text-xs sm:text-sm font-semibold mb-3 opacity-90 uppercase tracking-wide">Your monthly cost per {selectedRole}</p>
+                    <p className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 break-words">
                       {formatDualCurrency(Math.round(juniorForgeSalary / 12))}
                     </p>
-                    <p className="text-sm opacity-80 mt-3 font-light">
+                    <p className="text-xs sm:text-sm opacity-80 mt-3 font-light">
                       vs {formatDualCurrency(Math.round(customSalary / 12))} market rate — Save 40% on talent costs
                     </p>
                   </div>
@@ -480,90 +479,90 @@ const HiringCalculator = () => {
 
                 {/* Breakdown Section */}
                 <div>
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-6 px-2">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 sm:mb-6 px-2">
                     Savings Breakdown
                   </h3>
                   
-                  <div className="space-y-5">
-                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                          <DollarSign className="w-6 h-6 text-white" />
+                  <div className="space-y-4 sm:space-y-5">
+                    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500 mb-2 font-medium">Lower salary costs (first 6 months)</p>
-                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-medium">Lower salary costs (first 6 months)</p>
+                          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">
                             {formatDualCurrency(sixMonthSalarySavings)}
                           </p>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Pay 40% below market rate for pre-vetted talent. That's {formatDualCurrency(Math.round(juniorForgeSalary / 12))}/month vs {formatDualCurrency(Math.round(customSalary / 12))} market rate.
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#685EFC] to-[#5449d4] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                          <Clock className="w-6 h-6 text-white" />
+                    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#685EFC] to-[#5449d4] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500 mb-2 font-medium">Time-to-hire savings</p>
-                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-medium">Time-to-hire savings</p>
+                          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">
                             {formatDualCurrency(timeSavingsValue)}
                           </p>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Get candidates in 72 hours instead of waiting {traditionalTimeToHire} days. That's {timeSavingsDays} days of productivity you keep.
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                          <Users className="w-6 h-6 text-white" />
+                    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500 mb-2 font-medium">Team time saved</p>
-                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-medium">Team time saved</p>
+                          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">
                             {formatDualCurrency(screeningTimeSavings)}
                           </p>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Your team saves {totalScreeningHours} hours. No resume screening, no initial calls—just final interviews with pre-vetted talent.
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#685EFC] to-[#5449d4] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                          <TrendingDown className="w-6 h-6 text-white" />
+                    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#685EFC] to-[#5449d4] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500 mb-2 font-medium">Reduced bad hire risk</p>
-                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-medium">Reduced bad hire risk</p>
+                          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">
                             {formatDualCurrency(replacementSavings)}
                           </p>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             Our vetting process plus 90-day guarantee reduces replacement costs by 75%.
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                          <Code className="w-6 h-6 text-white" />
+                    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                          <Code className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500 mb-2 font-medium">Job boards & recruiting costs</p>
-                          <p className="text-3xl font-bold text-gray-900 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-medium">Job boards & recruiting costs</p>
+                          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">
                             {formatDualCurrency(traditionalTotalCost)}
                           </p>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                             No job board fees, no agency placement fees. JuniorForge is completely free.
                           </p>
                         </div>
@@ -573,8 +572,8 @@ const HiringCalculator = () => {
                 </div>
 
                 {/* Disclaimer */}
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 sm:p-6 border border-gray-200">
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                     <span className="font-semibold text-gray-900">Note:</span> These calculations are based on industry averages for traditional hiring in {currencies[selectedCurrency].country}. Your actual savings may vary based on your specific situation, but the time and quality advantages remain consistent.
                   </p>
                 </div>
@@ -597,93 +596,93 @@ const HiringCalculator = () => {
         {/* Bottom Benefits Section */}
         {showResults && (
           <>
-            <div className="mt-24 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="mt-16 sm:mt-20 lg:mt-24 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
               <div className="group">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                  <Clock className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <Clock className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-4">72-hour turnaround</h4>
-                <p className="text-gray-600 leading-relaxed">
+                <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">72-hour turnaround</h4>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                   Skip weeks of sourcing and screening. Get qualified candidates ready for final interviews within three days.
                 </p>
               </div>
               <div className="group">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                  <Users className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-4">Rigorously pre-vetted</h4>
-                <p className="text-gray-600 leading-relaxed">
+                <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Rigorously pre-vetted</h4>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                   Technical assessments, portfolio reviews, and culture fit screening completed before you meet them.
                 </p>
               </div>
-              <div className="group">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
-                  <DollarSign className="w-7 h-7 text-white" />
+              <div className="group sm:col-span-2 lg:col-span-1">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#12895E] to-[#0f7a4b] rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-shadow">
+                  <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-4">Completely free</h4>
-                <p className="text-gray-600 leading-relaxed">
+                <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Completely free</h4>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                   No placement fees, no agency costs, no hidden charges. You only pay the talent's salary.
                 </p>
               </div>
             </div>
 
             {/* Hidden Value Section */}
-            <div className="mt-24 bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100">
-              <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <div className="mt-16 sm:mt-20 lg:mt-24 bg-gradient-to-br from-white to-gray-50 rounded-3xl p-6 sm:p-8 lg:p-12 shadow-xl border border-gray-100">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                 What the calculator doesn't include
               </h3>
-              <p className="text-lg text-gray-600 mb-10 leading-relaxed max-w-3xl">
+              <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 leading-relaxed max-w-3xl">
                 The real value goes beyond the numbers. Here's what you also get with JuniorForge:
               </p>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="flex gap-5">
+              <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+                <div className="flex gap-4 sm:gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Quality of hire</h4>
-                    <p className="text-gray-600 leading-relaxed">
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">Quality of hire</h4>
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                       Pre-vetted means better cultural and technical fit from day one
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-5">
+                <div className="flex gap-4 sm:gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Reduced stress</h4>
-                    <p className="text-gray-600 leading-relaxed">
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">Reduced stress</h4>
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                       Hiring is draining; we handle the hard parts so you can focus on building
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-5">
+                <div className="flex gap-4 sm:gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Faster onboarding</h4>
-                    <p className="text-gray-600 leading-relaxed">
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">Faster onboarding</h4>
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                       Better matches mean quicker ramp-up time and earlier productivity
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-5">
+                <div className="flex gap-4 sm:gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#37ffb7] to-[#12895E] rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 mb-2 text-lg">Long-term retention</h4>
-                    <p className="text-gray-600 leading-relaxed">
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">Long-term retention</h4>
+                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                       Good matches from the start means people stay longer and grow with your company
                     </p>
                   </div>
