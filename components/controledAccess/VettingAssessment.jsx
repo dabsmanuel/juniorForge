@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Download, Eye, CheckCircle, AlertCircle, Clock, BarChart3, TrendingDown, Award, Loader2 } from 'lucide-react';
+import { Search, Plus, Download, Eye, CheckCircle, AlertCircle, Clock, BarChart3, TrendingDown, Award, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const AdminVettingDashboard = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -21,6 +21,11 @@ const AdminVettingDashboard = () => {
     potentialLearningAgility: 0
   });
 
+  // Pagination States
+  const [currentPageSubmissions, setCurrentPageSubmissions] = useState(1);
+  const [currentPageAssessments, setCurrentPageAssessments] = useState(1);
+  const itemsPerPage = 10;
+
   // Custom Modal States
   const [customModal, setCustomModal] = useState({ show: false, title: '', message: '', type: 'info' }); // info, success, error
   const [creatingAssessment, setCreatingAssessment] = useState(false);
@@ -37,8 +42,10 @@ const AdminVettingDashboard = () => {
   useEffect(() => {
     if (activeTab === 'submissions') {
       fetchSubmissions();
+      setCurrentPageSubmissions(1);
     } else {
       fetchAssessments();
+      setCurrentPageAssessments(1);
     }
   }, [activeTab, filterTier]);
 
@@ -179,7 +186,7 @@ const AdminVettingDashboard = () => {
 
   const getTierBadge = (tier) => {
     const colors = {
-      'Tier 1': 'bg-green-100 text-green-800 border-green-300',
+  'Tier 1': 'bg-green-100 text-green-800 border-green-300',
       'Tier 2': 'bg-yellow-100 text-yellow-800 border-yellow-300',
       'Tier 3': 'bg-red-100 text-red-800 border-red-300'
     };
@@ -210,6 +217,7 @@ const AdminVettingDashboard = () => {
     return colors[level] || 'bg-gray-100 text-gray-800';
   };
 
+  // Filtering
   const filteredSubmissions = submissions.filter(sub =>
     sub.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sub.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -219,6 +227,20 @@ const AdminVettingDashboard = () => {
     assessment.talentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     assessment.talentEmail?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination Logic
+  const paginatedSubmissions = filteredSubmissions.slice(
+    (currentPageSubmissions - 1) * itemsPerPage,
+    currentPageSubmissions * itemsPerPage
+  );
+
+  const paginatedAssessments = filteredAssessments.slice(
+    (currentPageAssessments - 1) * itemsPerPage,
+    currentPageAssessments * itemsPerPage
+  );
+
+  const totalPagesSubmissions = Math.ceil(filteredSubmissions.length / itemsPerPage);
+  const totalPagesAssessments = Math.ceil(filteredAssessments.length / itemsPerPage);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -240,7 +262,7 @@ const AdminVettingDashboard = () => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Talent Submissions
+              Talent Submissions ({filteredSubmissions.length})
             </button>
             <button
               onClick={() => setActiveTab('assessments')}
@@ -250,15 +272,15 @@ const AdminVettingDashboard = () => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Assessments & Scores
+              Assessments & Scores ({filteredAssessments.length})
             </button>
           </div>
         </div>
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex gap-4 items-center">
-            <div className="flex-1 relative">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="flex-1 relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
@@ -291,159 +313,223 @@ const AdminVettingDashboard = () => {
           </div>
         ) : (
           <>
-            {activeTab === 'submissions' && (
-              <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Talent</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredSubmissions.map((submission) => (
-                      <tr key={submission._id} className="hover:bg-gray-50">
-                        <td className="p-4">
-                          <div className="font-sm text-gray-900">{submission.fullName}</div>
-                          <div className="text-xs text-gray-500">{submission.email}</div>
-                        </td>
-                        <td className="p-4 text-xs text-gray-900">{submission.preferredRole}</td>
-                        <td className="p-4 text-xs  text-gray-500">
-                          {new Date(submission.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="p-4">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            submission.status === 'Converted to Talent' ? 'bg-green-100 text-green-800' :
-                            submission.status === 'Vetted' ? 'bg-blue-100 text-[#685EFC]' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {submission.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          {!submission.convertedToTalent && (
-                            <button
-                              onClick={() => {
-                                setSelectedSubmission(submission);
-                                setShowCreateModal(true);
-                              }}
-                              className="flex items-center gap-2 px-4 py-2 bg-[#685EFC] text-white rounded-lg hover:bg-[#574FDB] transition text-xs"
-                            >
-                              <Plus className="w-4 h-4" />
-                              Create Assessment
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {filteredSubmissions.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    No submissions found
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Horizontal Scroll Wrapper */}
+            <div className="overflow-x-auto bg-white rounded-lg shadow">
+              <div className="min-w-[900px]">
+                {activeTab === 'submissions' && (
+                  <>
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Talent</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {paginatedSubmissions.map((submission) => (
+                          <tr key={submission._id} className="hover:bg-gray-50">
+                            <td className="p-4">
+                              <div className="font-sm text-gray-900">{submission.fullName}</div>
+                              <div className="text-xs text-gray-500">{submission.email}</div>
+                            </td>
+                            <td className="p-4 text-xs text-gray-900">{submission.preferredRole}</td>
+                            <td className="p-4 text-xs text-gray-500">
+                              {new Date(submission.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="p-4">
+                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                submission.status === 'Converted to Talent' ? 'bg-green-100 text-green-800' :
+                                submission.status === 'Vetted' ? 'bg-blue-100 text-[#685EFC]' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {submission.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {!submission.convertedToTalent && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedSubmission(submission);
+                                    setShowCreateModal(true);
+                                  }}
+                                  className="flex items-center gap-2 px-4 py-2 bg-[#685EFC] text-white rounded-lg hover:bg-[#574FDB] transition text-xs"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  Create Assessment
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
 
-            {activeTab === 'assessments' && (
-              <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Talent</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">AI Score</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tier</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Admin Score</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredAssessments.map((assessment) => (
-                      <tr key={assessment._id} className="hover:bg-gray-50">
-                        <td className="p-4">
-                          <div className="font-sm text-gray-900">{assessment.talentName}</div>
-                          <div className="text-xs text-gray-500">{assessment.talentEmail}</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-400">{assessment.role}</span>
-                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs font-medium">
-                              {assessment.techStack}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(assessment.tokenStatus)}
-                            <span className="text-xs capitalize">{assessment.tokenStatus}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="text-lg font-bold text-gray-900">
-                            {assessment.score?.percentage || '-'}%
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {assessment.score?.raw || 0}/100 pts
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          {assessment.score?.tier ? getTierBadge(assessment.score.tier) : '-'}
-                        </td>
-                        <td className="p-4">
-                          {assessment.adminScores?.overallAdjusted ? (
-                            <div className="text-lg font-semibold text-[#685EFC]">
-                              {assessment.adminScores.overallAdjusted}/100
-                            </div>
-                          ) : (
-                            <span className="text-gray-400 text-sm">Not scored</span>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                setSelectedAssessment(assessment);
-                                setShowSkillGapModal(true);
-                              }}
-                              className="px-3 py-1 bg-[#685EFC] text-white text-xs rounded hover:bg-[#574BDB] transition flex items-center gap-1"
-                            >
-                              <BarChart3 className="w-4 h-4" />
-                              Skills
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedAssessment(assessment);
-                                setShowScoreModal(true);
-                                setAdminScores(assessment.adminScores || {
-                                  technicalSkills: 0,
-                                  professionalReadiness: 0,
-                                  culturalFit: 0,
-                                  potentialLearningAgility: 0
-                                });
-                              }}
-                              className="px-3 py-1 bg-[#16252D] text-white text-xs rounded hover:bg-[#0f1a24] transition"
-                            >
-                              Score
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {filteredAssessments.length === 0 && (
-                  <div className="text-center py-12 text-gray-500">
-                    No assessments found
-                  </div>
+                    {/* Pagination for Submissions */}
+                    {totalPagesSubmissions > 1 && (
+                      <div className="px-6 py-4 border-t flex items-center justify-between bg-gray-50">
+                        <p className="text-sm text-gray-700">
+                          Showing {((currentPageSubmissions - 1) * itemsPerPage) + 1} to{' '}
+                          {Math.min(currentPageSubmissions * itemsPerPage, filteredSubmissions.length)} of{' '}
+                          {filteredSubmissions.length} results
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setCurrentPageSubmissions(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPageSubmissions === 1}
+                            className="p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                          <span className="text-sm font-medium">
+                            Page {currentPageSubmissions} of {totalPagesSubmissions}
+                          </span>
+                          <button
+                            onClick={() => setCurrentPageSubmissions(prev => Math.min(prev + 1, totalPagesSubmissions))}
+                            disabled={currentPageSubmissions === totalPagesSubmissions}
+                            className="p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {activeTab === 'assessments' && (
+                  <>
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Talent</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">AI Score</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tier</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Admin Score</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {paginatedAssessments.map((assessment) => (
+                          <tr key={assessment._id} className="hover:bg-gray-50">
+                            <td className="p-4">
+                              <div className="font-sm text-gray-900">{assessment.talentName}</div>
+                              <div className="text-xs text-gray-500">{assessment.talentEmail}</div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-gray-400">{assessment.role}</span>
+                                <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs font-medium">
+                                  {assessment.techStack}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-2">
+                                {getStatusIcon(assessment.tokenStatus)}
+                                <span className="text-xs capitalize">{assessment.tokenStatus}</span>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="text-lg font-bold text-gray-900">
+                                {assessment.score?.percentage || '-'}%
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {assessment.score?.raw || 0}/100 pts
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              {assessment.score?.tier ? getTierBadge(assessment.score.tier) : '-'}
+                            </td>
+                            <td className="p-4">
+                              {assessment.adminScores?.overallAdjusted ? (
+                                <div className="text-lg font-semibold text-[#685EFC]">
+                                  {assessment.adminScores.overallAdjusted}/100
+                                </div>
+                              ) : (
+                                <span className="text-gray-400 text-sm">Not scored</span>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedAssessment(assessment);
+                                    setShowSkillGapModal(true);
+                                  }}
+                                  className="px-3 py-1 bg-[#685EFC] text-white text-xs rounded hover:bg-[#574BDB] transition flex items-center gap-1"
+                                >
+                                  <BarChart3 className="w-4 h-4" />
+                                  Skills
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedAssessment(assessment);
+                                    setShowScoreModal(true);
+                                    setAdminScores(assessment.adminScores || {
+                                      technicalSkills: 0,
+                                      professionalReadiness: 0,
+                                      culturalFit: 0,
+                                      potentialLearningAgility: 0
+                                    });
+                                  }}
+                                  className="px-3 py-1 bg-[#16252D] text-white text-xs rounded hover:bg-[#0f1a24] transition"
+                                >
+                                  Score
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    {/* Pagination for Assessments */}
+                    {totalPagesAssessments > 1 && (
+                      <div className="px-6 py-4 border-t flex items-center justify-between bg-gray-50">
+                        <p className="text-sm text-gray-700">
+                          Showing {((currentPageAssessments - 1) * itemsPerPage) + 1} to{' '}
+                          {Math.min(currentPageAssessments * itemsPerPage, filteredAssessments.length)} of{' '}
+                          {filteredAssessments.length} results
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setCurrentPageAssessments(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPageAssessments === 1}
+                            className="p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                          <span className="text-sm font-medium">
+                            Page {currentPageAssessments} of {totalPagesAssessments}
+                          </span>
+                          <button
+                            onClick={() => setCurrentPageAssessments(prev => Math.min(prev + 1, totalPagesAssessments))}
+                            disabled={currentPageAssessments === totalPagesAssessments}
+                            className="p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
-            )}
+            </div>
+
+            {/* Empty State */}
+            {(activeTab === 'submissions' && filteredSubmissions.length === 0) ||
+             (activeTab === 'assessments' && filteredAssessments.length === 0) ? (
+              <div className="text-center py-12 text-gray-500 bg-white rounded-lg shadow mt-6">
+                No {activeTab === 'submissions' ? 'submissions' : 'assessments'} found
+              </div>
+            ) : null}
           </>
         )}
 
+        {/* All Modals Below (unchanged) */}
         {/* Create Assessment Modal */}
         {showCreateModal && selectedSubmission && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -516,7 +602,7 @@ const AdminVettingDashboard = () => {
                   onClick={() => setShowSkillGapModal(false)}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  ✕
+                  ×
                 </button>
               </div>
               
@@ -661,7 +747,7 @@ const AdminVettingDashboard = () => {
                   {customModal.title}
                 </h3>
                 <button onClick={() => setCustomModal({ ...customModal, show: false })} className="text-gray-500 hover:text-gray-700">
-                  ✕
+                  ×
                 </button>
               </div>
               <div className="text-gray-700 mb-6">
