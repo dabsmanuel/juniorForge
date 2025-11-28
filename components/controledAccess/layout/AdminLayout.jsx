@@ -6,9 +6,8 @@ import DashboardHeader from '../layout/Header';
 import AdminDashboard from '../admin/AdminDashboard';
 import SubmissionsView from '../SubmissionsView';
 import DownloadsView from '../DownloadsView';
-import TalentManagement from '../TalentManagement';
-import BootcampManagement from '../BootcampManagement';
 import VettedTalentsView from '../VettedTalents';
+import AssessmentSettingsView from '../VettingAssessment';
 import { useApi } from '../../../hooks/useApi';
 import { submissionsApi, talentApi, bootcampApi } from '../../../lib/util';
 
@@ -52,14 +51,12 @@ const AdminLayout = ({ admin, token, onLogout }) => {
         return <AdminDashboard data={dashboardData} loading={loading} admin={admin} />;
       case 'submissions':
         return <SubmissionsView admin={admin} token={token} />;
-      case 'talents':
-        return <TalentManagement admin={admin} token={token} onDataChange={loadDashboardData} />;
-      case 'bootcamps':
-        return <BootcampManagement admin={admin} token={token} onDataChange={loadDashboardData} />;
       case 'downloads':
         return <DownloadsView admin={admin} token={token} />;
       case 'vetted-talents':
         return <VettedTalentsView admin={admin} token={token} />;
+      case 'assessment-settings':
+        return <AssessmentSettingsView admin={admin} token={token} />;
       default:
         return <AdminDashboard data={dashboardData} loading={loading} admin={admin} />;
     }

@@ -1,5 +1,5 @@
 'use client'
-import { talentstapge } from '@/data/db'
+import { talentstapge } from '../../../data/db'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 

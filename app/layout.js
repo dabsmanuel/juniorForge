@@ -1,9 +1,9 @@
 import { Poppins, MuseoModerno } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+import Navbar from "../components/shared/Navbar";
+import Footer from "../components/shared/Footer";
 import { Analytics } from '@vercel/analytics/react';
-import CookieConsent from "@/components/shared/CookieConsent"; // Add this
+import CookieConsent from "../components/shared/CookieConsent"; // Add this
 
 const poppins = Poppins({
   variable: "--font-poppins",

@@ -1,5 +1,5 @@
 "use client"
-import { team } from "@/data/db"
+import { team } from "../../../data/db"
 import Image from "next/image"
 import { motion } from "framer-motion"
 

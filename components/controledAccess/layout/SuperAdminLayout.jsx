@@ -9,11 +9,10 @@ import DownloadsView from '../DownloadsView';
 import PendingAdmins from '../PendingAdmins';
 import AllAdmins from '../AllAdmins';
 import AdminStats from '../AdminStats';
-import TalentManagement from '../TalentManagement';
-import BootcampManagement from '../BootcampManagement';
 import VettedTalentsView from '../VettedTalents';
 import AccountingDashboard from '../Accounting';
-import AccountingPage from '../accounting/AccountingPage';
+import AssessmentSettingsView from '../VettingAssessment';
+
 import { useApi } from '../../../hooks/useApi';
 import { authApi, submissionsApi, talentApi, bootcampApi } from '../../../lib/util';
 
@@ -60,10 +59,6 @@ const SuperAdminLayout = ({ admin, token, onLogout }) => {
         return <SuperAdminDashboard data={dashboardData} loading={loading} />;
       case 'submissions':
         return <SubmissionsView admin={admin} token={token} />;
-      case 'talents':
-        return <TalentManagement admin={admin} token={token} onDataChange={loadDashboardData} />;
-      case 'bootcamps':
-        return <BootcampManagement admin={admin} token={token} onDataChange={loadDashboardData} />;
       case 'downloads':
         return <DownloadsView admin={admin} token={token} />;
       case 'pendingAdmins':
@@ -74,6 +69,8 @@ const SuperAdminLayout = ({ admin, token, onLogout }) => {
         return <AdminStats admin={admin} token={token} />;
       case 'vetted-talents':
         return <VettedTalentsView admin={admin} token={token} />;
+      case 'assessment-settings':
+                return <AssessmentSettingsView admin={admin} token={token} />;
       case 'account':
         return <AccountingDashboard admin={admin} token={token} />;
       default:

@@ -11,7 +11,7 @@ import {
   User,
   X,
   Users,
-  GraduationCap,
+  TestTubes,
   VerifiedIcon
 } from 'lucide-react';
 
@@ -38,18 +38,6 @@ const AdminSidebar = ({
       permission: 'viewSubmissions'
     },
     {
-      id: 'talents',
-      label: 'Talents',
-      icon: Users,
-      permission: 'viewSubmissions'
-    },
-    {
-      id: 'bootcamps',
-      label: 'Bootcamps',
-      icon: GraduationCap,
-      permission: 'viewSubmissions'
-    },
-    {
       id: 'downloads',
       label: 'Downloads',
       icon: Download,
@@ -59,6 +47,12 @@ const AdminSidebar = ({
       id: 'vetted-talents',
       label: 'Vetted Talents',
       icon: VerifiedIcon,
+      permission: null
+    },
+    {
+      id: 'assessment-settings',
+      label: 'Assessment Settings',
+      icon: TestTubes,
       permission: null
     }
   ];

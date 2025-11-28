@@ -1,6 +1,6 @@
 'use client'
 import { motion } from "framer-motion"
-import { whyWeAreDifferent } from "@/data/db"
+import { whyWeAreDifferent } from "../../../data/db"
 
 const Different = () => {
   // Animation variants

@@ -5,7 +5,6 @@ import {
   LayoutDashboard, 
   FileText, 
   Download,
-  Settings,
   ChevronLeft,
   ChevronRight,
   User,
@@ -13,8 +12,7 @@ import {
   Users,
   BarChart3,
   X,
-  GraduationCap,
-  VectorSquare,
+  TestTubes,
   VerifiedIcon,
   Banknote
 } from 'lucide-react';
@@ -66,21 +64,15 @@ const SuperAdminSidebar = ({
       permission: 'manageAdmins'
     },
     {
-      id: 'talents',
-      label: 'Talents',
-      icon: Users,
-      permission: 'viewSubmissions'
-    },
-    {
-      id: 'bootcamps',
-      label: 'Bootcamps',
-      icon: GraduationCap,
-      permission: 'viewSubmissions'
-    },
-    {
       id: 'vetted-talents',
       label: 'Vetted Talents',
       icon: VerifiedIcon,
+      permission: null
+    },
+    {
+      id: 'assessment-settings',
+      label: 'Assessment Settings',
+      icon: TestTubes,
       permission: null
     },
 
@@ -211,29 +203,6 @@ const SuperAdminSidebar = ({
             ))}
           </ul>
         </nav>
-
-        {/* Desktop Permissions Info */}
-        {!collapsed && (
-          <div className="p-4 flex-shrink-0">
-            <div className="bg-gray-800 p-3 rounded-lg">
-              <div className="text-xs text-gray-400 mb-2">Your Permissions:</div>
-              <div className="space-y-1">
-                {admin?.permissions?.viewSubmissions && (
-                  <div className="text-xs text-green-400">✓ View Submissions</div>
-                )}
-                {admin?.permissions?.deleteSubmissions && (
-                  <div className="text-xs text-green-400">✓ Delete Submissions</div>
-                )}
-                {admin?.permissions?.downloadFiles && (
-                  <div className="text-xs text-green-400">✓ Download Files</div>
-                )}
-                {admin?.permissions?.manageAdmins && (
-                  <div className="text-xs text-green-400">✓ Manage Admins</div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Desktop Footer */}
         {!collapsed && (

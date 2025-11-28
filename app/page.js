@@ -1,7 +1,7 @@
-import Cta from "@/components/shared/cta/Cta"
-import Header from "@/components/Home/header/Header"
-import WhoWeHelp from "@/components/Home/whoWeHelp/WhoWeHelp"
-import Testimonials from "@/components/shared/testimonials/Testimonials"
+import Cta from "../components/shared/cta/Cta"
+import Header from "../components/Home/header/Header"
+import WhoWeHelp from "../components/Home/whoWeHelp/WhoWeHelp"
+import Testimonials from "../components/shared/testimonials/Testimonials"
 
 const page = () => {
   return (

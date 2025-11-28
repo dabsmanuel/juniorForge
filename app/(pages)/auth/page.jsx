@@ -4,9 +4,9 @@ import SuperAdminLayout from '../../../components/controledAccess/layout/SuperAd
 import AdminLayout from '../../../components/controledAccess/layout/AdminLayout';
 import LoadingSpinner from '../../../components/controledAccess/layout/LoadingSpinner';
 import ErrorBoundary from '../../../components/ErrorBoundary';
-import ProtectedRoute from '@/components/ProtectRoute';
-import LoginPage from '@/components/auth/LoginPage';
-import RegisterPage from '@/components/auth/RegisterPage';
+import ProtectedRoute from '../../../components/ProtectRoute';
+import LoginPage from '../../../components/auth/LoginPage';
+import RegisterPage from '../../../components/auth/RegisterPage';
 
 const App = () => {
   const {

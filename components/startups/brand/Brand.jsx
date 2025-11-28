@@ -1,7 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
-import { startups } from '@/data/db'
-import Image from 'next/image'
+import { startups } from '../../../data/db'
+
 
 const Brand = () => {
   // Animation variants for the container

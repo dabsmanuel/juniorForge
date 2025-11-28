@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import AccountingDashboard from '../Accounting';
-import { authApi } from '@/lib/util';
+import { authApi } from '../../../lib/util';
 
 const AccountingPage = () => {
   const [admin, setAdmin] = useState(null);

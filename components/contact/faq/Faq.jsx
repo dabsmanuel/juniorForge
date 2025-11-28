@@ -1,6 +1,6 @@
 'use client'
 import { motion } from 'framer-motion'
-import { faqs } from '@/data/db'
+import { faqs } from '../../../data/db'
 
 const FAQ = () => {
   // Animation variants for the container

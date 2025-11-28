@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
-import { testimonials } from '@/data/db'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { testimonials } from '../../../data/db'
 import { ImQuotesLeft } from "react-icons/im";
 import Image from 'next/image';
 import { motion } from "framer-motion"

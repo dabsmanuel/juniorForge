@@ -1,4 +1,4 @@
-import JuniorForgeAccounting from '@/components/controledAccess/Accounting';
+import JuniorForgeAccounting from '../../../components/controledAccess/Accounting';
 
 const Page = async () => {
   return <JuniorForgeAccounting/>;
